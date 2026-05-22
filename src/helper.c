@@ -2,6 +2,11 @@
 
 #define k 2
 
+void displayString(int* string,int n){
+    for (int i =0;i<n;i++) {printf("%d",string[i]);}
+    printf("\n");
+}
+
 
 int *compute_lps(const int arr[], int n) {
     int *lps = calloc(n, sizeof(int));
@@ -176,7 +181,7 @@ bool is_zeros_then_ones(const int arr[], int n, int *numZeros) {
         }
     }
     
-    // if (*numZeros == 0) *numZeros = pow(2,n);
+    if (arr[0] == 1) *numZeros = pow(2,n);
     return true;
 }
 

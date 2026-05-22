@@ -6,6 +6,8 @@
 
 #define k 2
 
+void displayString(int* string,int n);
+
 int *compute_lps(const int arr[], int n);
 
 int shortest_repeating_length(const int arr[], int n);
