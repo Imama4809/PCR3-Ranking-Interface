@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -g -Iinc
 SRC = $(wildcard src/*.c)
 OBJ = $(patsubst src/%.c,obj/%.o,$(SRC))
 
-program: $(OBJ)
+program: bin $(OBJ)
 	$(CC) $(CFLAGS) -o bin/program $(OBJ) -lm
 
 obj/%.o: src/%.c | obj
@@ -12,6 +12,9 @@ obj/%.o: src/%.c | obj
 
 obj:
 	mkdir -p obj
+
+bin:
+	mkdir -p bin
 
 clean:
 	rm -f obj/*.o bin/program
