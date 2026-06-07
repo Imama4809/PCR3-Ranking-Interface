@@ -1,13 +1,13 @@
-#include "../inc/trails.h"
+#include "../inc/trials.h"
 
 int testRankNecklacePCR3(int *alpha, int n){
     if (!isNecklacePCR3(alpha,n)) return -1;
     sumArrBy1(alpha,n);
-    return PCR3Count(alpha,n);
+    return PCR3CountN(alpha,n);
 }
-int* testUnrankNecklacePCR3(int rank, int n){
+int* testGetClosestNeckInDBSeqPCR3(int rank, int n){
     int* closestNeck = malloc(sizeof(int)*n);
-    unrankNecklace(rank,n,closestNeck);
+    getClosestNeckInDBSeq(rank,n,closestNeck);
     return closestNeck;
 }
 int testRankLyndonWordPCR3(int *alpha, int n){

@@ -8,19 +8,22 @@ void textInterface(){
     // 4 rank DB seq PCR3
     // 5 unrank DB seq PCR3
     int n, option;
-    printf("what size of string (n value)?: ");
-    scanf("%d",&n);
+    
     // n=8;
     printf("pick an option\n");
     printf("1: rank PCR3 necklace\n");
     printf("2: rank PCR3 Lyndon Word\n");
-    printf("3: unrank PCR3 necklace\n");
-    printf("4: rank DB seq PCR3\n");
+    printf("3: find closest PCR3 necklace from rank\n");
+    printf("4: rank find DB seq PCR3\n");
     printf("5: unrank DB seq PCR3\n");
+    printf("6: print DB sequence of size n\n");
+    printf("7: print cutdown DB sequence\n");
     printf("option: ");
     scanf("%d",&option);
     switch (option){
         case 1: {
+            printf("\nwhat size of string (n value)?: ");
+            scanf("%d",&n);
             int *alpha = malloc(sizeof(int) * n);
             char buf[128];
             printf("input your string (0s and 1s only): ");
@@ -33,6 +36,8 @@ void textInterface(){
             break;
         }
         case 2: {
+            printf("\nwhat size of string (n value)?: ");
+            scanf("%d",&n);
             int *alpha = malloc(sizeof(int) * n);
             char buf[128];
             printf("input your string (0s and 1s only): ");
@@ -45,10 +50,12 @@ void textInterface(){
             break;
         }
         case 3: {
+            printf("\nwhat size of string (n value)?: ");
+            scanf("%d",&n);
             int rank;
             printf("input your rank: ");
             scanf("%d",&rank);
-            int *neck = testUnrankNecklacePCR3(rank,n);
+            int *neck = testGetClosestNeckInDBSeqPCR3(rank,n);
             printf("string: ");
             for (int i=0;i<n;i++){
                 printf("%d",neck[i]);
@@ -58,6 +65,8 @@ void textInterface(){
             break;
         }
         case 4: {
+            printf("\nwhat size of string (n value)?: ");
+            scanf("%d",&n);
             int *alpha = malloc(sizeof(int) * n);
             char buf[128];
             printf("input your string (0s and 1s only): ");
@@ -70,6 +79,8 @@ void textInterface(){
             break;
         }
         case 5: {
+            printf("\nwhat size of string (n value)?: ");
+            scanf("%d",&n);
             int rank;
             printf("input your rank: ");
             scanf("%d",&rank);
@@ -80,6 +91,52 @@ void textInterface(){
             }
             printf("\n");
             free(string);
+            break;
+        }
+        case 6:{
+            printf("\nwhat size of string (n value)?: ");
+            scanf("%d",&n);
+            printf("DB sequence: ");
+            int *string = malloc(sizeof(int)*n);
+            for (int i =0;i<n-1;i++) string[i] = 1;
+            string[n-1]=0;
+            DB(string,n);
+            // for (int i =0;i<n;i++) printf("0");
+            printf("\n");
+            free(string);
+            break;
+        }
+        case 7:{
+            int sizeCutDown;
+            printf("\nwhat size of cut down DB sequence?: ");
+            scanf("%d",&sizeCutDown);
+            n = 31 - __builtin_clz(sizeCutDown) + 1;
+            int *neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
+            int rank = testRankDBseqPCR3(neck,n);
+            int diff = rank-sizeCutDown;
+            if (diff == 0){
+                DB(neck,n);
+                return;
+            }
+            printf("rank: %d\n",rank);
+            printf("diff: %d\n",diff);
+            printf("n: %d\n",n);
+            int *cuts = malloc(sizeof(int));
+            int sizeCuts = 1;
+            if (diff > n/2){
+                cuts[sizeCuts-1] = n/2;
+                cuts = realloc(cuts,++sizeCuts*sizeof(int));
+                diff = diff-n/2;
+                if (diff > n/2 - 1){
+                    cuts[sizeCuts-1] = n/2-1;
+                    cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
+                    diff = diff-(n/2-1);
+                }
+            }
+            cuts[sizeCuts-1] = diff;
+            for (int i =0;i<sizeCuts;i++){
+                printf("cut: %d\n", cuts[i]);
+            }
         }
     }
 }

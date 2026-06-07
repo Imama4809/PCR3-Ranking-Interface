@@ -30,8 +30,12 @@ int getRank(int arr[], int n);
 
 void switchIndex(int *arr, int i, int j);
 
-int unrankNecklace(int rank, int n, int *closestNeck);
+int getClosestNeckInDBSeq(int rank, int n, int *closestNeck);
 
 void greatestPCR3Below(int *alpha, int n);
 
 void unrank(int rank, int n, int *string);
+
+void DB(int *alpha, int n);
+
+// int* createDBseq(int startingStr, int n);

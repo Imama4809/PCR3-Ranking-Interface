@@ -108,19 +108,19 @@ int sumWeight(int alpha[], int len) {
     return weight;
 }
 
-int isNecklacePCR1(int *arr, int n) {
-    if (n==1){return 1;}
-    for (int shift = 1; shift < n; ++shift) {
-        int is_smaller = 0;
-        for (int i = 0; i < n; ++i) {
-            int a = arr[i];
-            int b = arr[(i + shift) % n];
-            if (a < b) break;
-            if (a > b) { is_smaller = 1; break; }
-        }
-        if (is_smaller) return 0;
+int isNecklacePCR1(int *arr, int n)
+{
+    int p = 1;
+
+    for (int i = 1; i < n; ++i) {
+        if (arr[i % p] > arr[i])
+            return 0;
+
+        if (arr[i % p] < arr[i])
+            p = i + 1;
     }
-    return 1;
+
+    return (n % p == 0) ? p : 0;
 }
 
 int isNecklacePCR3(int *arr, int n) {
@@ -294,4 +294,10 @@ void greatestPCR3Below(int *alpha, int n){
         alpha[n-i] = 0;
         if (isNecklacePCR3(alpha,n)){return;}
     }
+}
+
+int smallestPCR3Neck(int *alpha, int n) {
+    int i;
+    for (i=1; i<n; i++) if (alpha[i] == 0) return 0;
+    return 1;
 }

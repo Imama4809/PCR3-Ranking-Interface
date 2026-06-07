@@ -5,7 +5,7 @@
 
 int testRankNecklacePCR3(int *alpha, int n);
 
-int* testUnrankNecklacePCR3(int rank, int n);
+int* testGetClosestNeckInDBSeqPCR3(int rank, int n);
 
 int testRankLyndonWordPCR3(int *alpha, int n);
 

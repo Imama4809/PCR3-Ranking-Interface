@@ -176,7 +176,7 @@ void switchIndex(int *arr, int i, int j){
 }
 
 
-int unrankNecklace(int rank, int n, int* closestNeck){
+int getClosestNeckInDBSeq(int rank, int n, int* closestNeck){
     for (int i = 0;i < n;i++) closestNeck[i] = 0;
     int temp;
     for (int i=0;i<n;i++){
@@ -209,7 +209,7 @@ void unrank(int rank, int n, int *string){
     // int *neck = malloc(sizeof(int)*n);
     int *beta1 = malloc(sizeof(int)*n);
     int *beta2 = malloc(sizeof(int)*n);
-    int neckPos = unrankNecklace(rank,n,beta1); // O(n)
+    int neckPos = getClosestNeckInDBSeq(rank,n,beta1); // O(n)
     for (int i=0;i<n;i++) beta2[i] = beta1[i];
     // beta2[n-1] = 1;
     greatestPCR3Below(beta2,n); // O(n)
@@ -249,3 +249,19 @@ void unrank(int rank, int n, int *string){
 }
 
 
+void DB(int *alpha, int n) {
+    printf("%d",1);
+    while (!smallestPCR3Neck(alpha,n)) {
+        for (int i =0;i<primLength(alpha,n);i++){
+            printf("%d",alpha[i]);
+            if (primLength(alpha,n) == 1) return;
+        }
+        greatestPCR3Below(alpha,n);
+        // printf("\n");
+    }
+    // return;
+}
+
+void cutDownDB(int *alpha, int* cuts, int n){
+    
+}

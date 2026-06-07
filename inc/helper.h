@@ -41,3 +41,5 @@ int smallestPCR3StrictlyAbove(int *alpha, int n);
 int countUniqueRotationsPCR3(int *arr, int n);
 
 void greatestPCR3Below(int *alpha, int n);
+
+int smallestPCR3Neck(int *alpha, int n);
