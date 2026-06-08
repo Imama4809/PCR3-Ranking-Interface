@@ -205,6 +205,14 @@ void sumArrBy1(int *arr,int n){
     for (int i=0;i<n;i++){arr[i]++;}
 }
 
+void delArrBy1(int *arr,int n){
+    for (int i=0;i<n;i++){arr[i]--;}
+}
+
+int isPowerOfTwo(unsigned int x) {
+    return x != 0 && (x & (x - 1)) == 0;
+}
+
 void findNextGreatestNecklace(int string[], int n){
     int startOfRightmostStringOfOnes = -1;
     for (int i = n-1;i>=0;i--){

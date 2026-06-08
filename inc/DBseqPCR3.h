@@ -38,4 +38,6 @@ void unrank(int rank, int n, int *string);
 
 void DB(int *alpha, int n);
 
+void cutDownDB(int *alpha, int *cutdown, int cutdownArrLen, int n);
+
 // int* createDBseq(int startingStr, int n);

@@ -88,7 +88,7 @@ int PCR3Count(int arr[], int n){
         }
         GreatestNecklaceSmallerThan(dum,n);
         // N(n,0,dum)-N(n,0,subt);
-        for (int l=0;l<=n;l++){
+        for (int l=1;l<=n;l++){
             
             if (n%l==0) {
                 // printf("\n");
@@ -96,7 +96,7 @@ int PCR3Count(int arr[], int n){
                 // printf(" - ");
                 // for (int m = 0;m<n/l;m++){printf("%d",subt[m]);}
                 // for (int l = n/j;l>0;l--){
-                    total += ((L(n/l,0,dum) - L(n/l,0,subt))*n/l);
+                    total += ((L(n/l,0,dum) - L(n/l,0,subt))*(n/l));
                     // total += N(n/j,0,dum);
                 // }
                 

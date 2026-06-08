@@ -250,7 +250,6 @@ void unrank(int rank, int n, int *string){
 
 
 void DB(int *alpha, int n) {
-    printf("%d",1);
     while (!smallestPCR3Neck(alpha,n)) {
         for (int i =0;i<primLength(alpha,n);i++){
             printf("%d",alpha[i]);
@@ -262,6 +261,59 @@ void DB(int *alpha, int n) {
     // return;
 }
 
-void cutDownDB(int *alpha, int* cuts, int n){
-    
+
+// alpha gaurunteed to be an Alt necklace
+void cutDownDB(int *alpha, int* cutdown,int cutdownArrLen, int n){
+    int primLen;
+    //need to find the strings that have substrings that are going to be cutout
+
+    int currentCutLen;
+    int **cutLocations = calloc(n, sizeof(*cutLocations));
+    for (int i = 0; i < n; i++) {
+        cutLocations[i] = calloc(cutdownArrLen, sizeof(*cutLocations[i]));
+    }
+    int *cutdownNecklacesRank = malloc(sizeof(int)*cutdownArrLen);
+    // printf("%d",cutdownArrLen);
+    for (int i =0;i<cutdownArrLen;i++){
+        currentCutLen = cutdown[i];
+        if (currentCutLen == 1){
+            cutdownNecklacesRank[i] = n;
+            // for (int j=0;j<n;j++){
+            //     printf("%d",cutLocations[i][j]);
+            // }
+            // printf("\n");
+            continue;
+        }
+        cutLocations[i][0] = 1;
+        for (int j=1;j<=n-currentCutLen;j++){
+            if (j%currentCutLen == 0){
+                cutLocations[i][j] = 1;
+            }
+        }
+        
+        cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
+        // for (int j=0;j<n;j++){
+        //     printf("%d",cutLocations[i][j]-1);
+        // }
+        // printf("\n");
+    }
+
+
+    while (!smallestPCR3Neck(alpha,n)) {
+        primLen = primLength(alpha,n);
+        int curCutOut= 0;
+        if (getRank(alpha,n) == cutdownNecklacesRank[curCutOut]){
+            primLen = primLen - cutdown[curCutOut];
+            curCutOut++;
+        }
+        delArrBy1(alpha,n);
+        for (int i =0;i<primLen;i++){
+            if (primLen == 1) {
+                printf("%d",alpha[i]+1);
+                return;
+            }
+            printf("%d",alpha[i]);
+        }
+        greatestPCR3Below(alpha,n);
+    }
 }

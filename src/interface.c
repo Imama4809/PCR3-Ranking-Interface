@@ -97,6 +97,7 @@ void textInterface(){
             printf("\nwhat size of string (n value)?: ");
             scanf("%d",&n);
             printf("DB sequence: ");
+            printf("%d",1);
             int *string = malloc(sizeof(int)*n);
             for (int i =0;i<n-1;i++) string[i] = 1;
             string[n-1]=0;
@@ -112,16 +113,39 @@ void textInterface(){
             scanf("%d",&sizeCutDown);
             n = 31 - __builtin_clz(sizeCutDown) + 1;
             int *neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
+            if ((1 << (n-1)) == sizeCutDown) {
+                for (int i=0;i<n;i++) neck[i]=1;
+                printf("%d",1);
+                neck[n-1] = 0;
+                DB(neck,n);
+                printf("\n");
+                return;
+            } else if ((1 << n) - 1 == sizeCutDown) {
+                DB(neck,n);
+                printf("\n");
+                return;
+            } else if ((1 << n) - 2 == sizeCutDown){
+                for (int i=0;i<n;i++) neck[i]=1;
+                printf("%d",1);
+                neck[n-1] = 0;
+                int *cuts = malloc(sizeof(int));
+                cuts[0] = 2;
+                cutDownDB(neck,cuts,1,n);
+                printf("\n");
+                return;
+            }
+
             int rank = testRankDBseqPCR3(neck,n);
             int diff = rank-sizeCutDown;
             if (diff == 0){
                 DB(neck,n);
                 return;
             }
-            printf("rank: %d\n",rank);
-            printf("diff: %d\n",diff);
-            printf("n: %d\n",n);
+            // printf("rank: %d\n",rank);
+            // printf("diff: %d\n",diff);
+            // printf("n: %d\n",n);
             int *cuts = malloc(sizeof(int));
+            // printf("\n");
             int sizeCuts = 1;
             if (diff > n/2){
                 cuts[sizeCuts-1] = n/2;
@@ -134,9 +158,12 @@ void textInterface(){
                 }
             }
             cuts[sizeCuts-1] = diff;
-            for (int i =0;i<sizeCuts;i++){
-                printf("cut: %d\n", cuts[i]);
-            }
+            // for (int i =0;i<sizeCuts;i++){
+            //     printf("cut: %d\n", cuts[i]);
+            // }
+            delArrBy1(neck,n);
+            cutDownDB(neck,cuts,sizeCuts,n);
+            printf("\n");
         }
     }
 }

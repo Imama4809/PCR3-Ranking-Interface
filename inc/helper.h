@@ -34,6 +34,10 @@ int primLength(const int *a, int n);
 
 void sumArrBy1(int *arr,int n);
 
+void delArrBy1(int *arr,int n);
+
+int isPowerOfTwo(unsigned int x);
+
 void findNextGreatestNecklace(int string[], int n);
 
 int smallestPCR3StrictlyAbove(int *alpha, int n);
