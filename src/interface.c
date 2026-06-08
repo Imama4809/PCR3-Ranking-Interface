@@ -111,9 +111,10 @@ void textInterface(){
             int sizeCutDown;
             printf("\nwhat size of cut down DB sequence?: ");
             scanf("%d",&sizeCutDown);
-            n = 31 - __builtin_clz(sizeCutDown) + 1;
+            n = 31 - __builtin_clz(sizeCutDown)+1;
             int *neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
-            if ((1 << (n-1)) == sizeCutDown) {
+            // printf("%d %d", n, sizeCutDown);
+            if ((1 << n) == sizeCutDown) {
                 for (int i=0;i<n;i++) neck[i]=1;
                 printf("%d",1);
                 neck[n-1] = 0;
@@ -121,6 +122,9 @@ void textInterface(){
                 printf("\n");
                 return;
             } else if ((1 << n) - 1 == sizeCutDown) {
+                for (int i=0;i<n;i++) neck[i]=1;
+                printf("%d",1);
+                neck[n-1] = 0;
                 DB(neck,n);
                 printf("\n");
                 return;
@@ -163,7 +167,55 @@ void textInterface(){
             // }
             delArrBy1(neck,n);
             cutDownDB(neck,cuts,sizeCuts,n);
-            printf("\n");
+            // printf("\n");
+            break;
         }
+        // case 8: {
+        //     int sizeCutDown;
+        //     printf("\nwhat size of cut down DB sequence?: ");
+        //     scanf("%d",&sizeCutDown);
+        //     n = 31 - __builtin_clz(sizeCutDown) + 1;
+        //     int *neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
+        //     if ((1 << (n-1)) == sizeCutDown) {
+
+        //         return;
+        //     } else if ((1 << n) - 1 == sizeCutDown) {
+
+        //         return;
+        //     } else if ((1 << n) - 2 == sizeCutDown){
+
+        //         return;
+        //     }
+
+        //     int rank = testRankDBseqPCR3(neck,n);
+        //     int diff = rank-sizeCutDown;
+        //     if (diff == 0){
+        //         DB(neck,n);
+        //         return;
+        //     }
+        //     // printf("rank: %d\n",rank);
+        //     // printf("diff: %d\n",diff);
+        //     // printf("n: %d\n",n);
+        //     int *cuts = malloc(sizeof(int));
+        //     // printf("\n");
+        //     int sizeCuts = 1;
+        //     if (diff > n/2){
+        //         cuts[sizeCuts-1] = n/2;
+        //         cuts = realloc(cuts,++sizeCuts*sizeof(int));
+        //         diff = diff-n/2;
+        //         if (diff > n/2 - 1){
+        //             cuts[sizeCuts-1] = n/2-1;
+        //             cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
+        //             diff = diff-(n/2-1);
+        //         }
+        //     }
+        //     cuts[sizeCuts-1] = diff;
+        //     // for (int i =0;i<sizeCuts;i++){
+        //     //     printf("cut: %d\n", cuts[i]);
+        //     // }
+        //     delArrBy1(neck,n);
+        //     printf("\n");
+        //     break;
+        // }
     }
 }

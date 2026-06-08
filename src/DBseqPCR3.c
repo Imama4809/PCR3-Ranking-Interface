@@ -268,46 +268,46 @@ void cutDownDB(int *alpha, int* cutdown,int cutdownArrLen, int n){
     //need to find the strings that have substrings that are going to be cutout
 
     int currentCutLen;
-    int **cutLocations = calloc(n, sizeof(*cutLocations));
-    for (int i = 0; i < n; i++) {
-        cutLocations[i] = calloc(cutdownArrLen, sizeof(*cutLocations[i]));
-    }
+    int (*cutLocations)[n] = calloc(cutdownArrLen, sizeof(*cutLocations));
     int *cutdownNecklacesRank = malloc(sizeof(int)*cutdownArrLen);
-    // printf("%d",cutdownArrLen);
     for (int i =0;i<cutdownArrLen;i++){
+        // printf("%d",cutdown[i]);
         currentCutLen = cutdown[i];
         if (currentCutLen == 1){
             cutdownNecklacesRank[i] = n;
             // for (int j=0;j<n;j++){
-            //     printf("%d",cutLocations[i][j]);
+            //     printf("%d ",cutLocations[i][j]);
             // }
             // printf("\n");
             continue;
         }
-        cutLocations[i][0] = 1;
-        for (int j=1;j<=n-currentCutLen;j++){
+        for (int j=0;j<=n-currentCutLen;j++){
             if (j%currentCutLen == 0){
                 cutLocations[i][j] = 1;
             }
         }
+
         
-        cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
         // for (int j=0;j<n;j++){
-        //     printf("%d",cutLocations[i][j]-1);
+        //     printf("%d ",cutLocations[i][j]);
         // }
+        cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
         // printf("\n");
     }
 
 
+    int curCutOut= 0;
+    int isCut = 0;
     while (!smallestPCR3Neck(alpha,n)) {
         primLen = primLength(alpha,n);
-        int curCutOut= 0;
         if (getRank(alpha,n) == cutdownNecklacesRank[curCutOut]){
-            primLen = primLen - cutdown[curCutOut];
+            isCut = 1;
             curCutOut++;
         }
         delArrBy1(alpha,n);
         for (int i =0;i<primLen;i++){
+            if (isCut){i = i + cutdown[curCutOut-1];isCut=0;}
+            
             if (primLen == 1) {
                 printf("%d",alpha[i]+1);
                 return;
@@ -316,4 +316,5 @@ void cutDownDB(int *alpha, int* cutdown,int cutdownArrLen, int n){
         }
         greatestPCR3Below(alpha,n);
     }
+    printf("\n");
 }
