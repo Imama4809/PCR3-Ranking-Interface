@@ -18,6 +18,8 @@ void textInterface(){
     printf("5: unrank DB seq PCR3\n");
     printf("6: print DB sequence of size n\n");
     printf("7: print cutdown DB sequence\n");
+    printf("8: rank cutdown DB sequence\n");
+    printf("9: unrank cutdown DB sequence\n");
     printf("option: ");
     scanf("%d",&option);
     switch (option){
@@ -141,6 +143,7 @@ void textInterface(){
 
             int rank = testRankDBseqPCR3(neck,n);
             int diff = rank-sizeCutDown;
+            delArrBy1(neck,n);
             if (diff == 0){
                 DB(neck,n);
                 return;
@@ -165,57 +168,100 @@ void textInterface(){
             // for (int i =0;i<sizeCuts;i++){
             //     printf("cut: %d\n", cuts[i]);
             // }
-            delArrBy1(neck,n);
             cutDownDB(neck,cuts,sizeCuts,n);
             // printf("\n");
             break;
         }
-        // case 8: {
-        //     int sizeCutDown;
-        //     printf("\nwhat size of cut down DB sequence?: ");
-        //     scanf("%d",&sizeCutDown);
-        //     n = 31 - __builtin_clz(sizeCutDown) + 1;
-        //     int *neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
-        //     if ((1 << (n-1)) == sizeCutDown) {
+        case 8: {
 
-        //         return;
-        //     } else if ((1 << n) - 1 == sizeCutDown) {
+            //EDGE CASES NEED TO BE DELT WITH, IF RANK EXCEEDS BY A LITTLE AND STARTS WITH 0'S IT EXISTS 
+            int sizeCutDown;
+            printf("\nwhat size of cut down DB sequence?: ");
+            scanf("%d",&sizeCutDown);
+            n = 31 - __builtin_clz(sizeCutDown) + 1;
+            int *neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
+            int *alpha = malloc(sizeof(int) * n);
+            char buf[128];
+            printf("input your string (0s and 1s only): ");
+            scanf("%s", buf);
+            for (int i = 0; i < n; i++) {
+                alpha[i] = buf[i] - '0';
+            }
+            if ((1 << (n-1)) == sizeCutDown) {
+                printf("Rank: %d\n", getRank(alpha,n));
+                return;
+            } else if ((1 << n) - 1 == sizeCutDown) {
+                int temp = getRank(alpha,n);
+                if (temp == (1<<n)){printf("String does not exist"); return;}
+                printf("Rank: %d\n", getRank(alpha,n));
+                return;
+            } else if ((1 << n) - 2 == sizeCutDown){
 
-        //         return;
-        //     } else if ((1 << n) - 2 == sizeCutDown){
+                return;
+            }
 
-        //         return;
-        //     }
 
-        //     int rank = testRankDBseqPCR3(neck,n);
-        //     int diff = rank-sizeCutDown;
-        //     if (diff == 0){
-        //         DB(neck,n);
-        //         return;
-        //     }
-        //     // printf("rank: %d\n",rank);
-        //     // printf("diff: %d\n",diff);
-        //     // printf("n: %d\n",n);
-        //     int *cuts = malloc(sizeof(int));
-        //     // printf("\n");
-        //     int sizeCuts = 1;
-        //     if (diff > n/2){
-        //         cuts[sizeCuts-1] = n/2;
-        //         cuts = realloc(cuts,++sizeCuts*sizeof(int));
-        //         diff = diff-n/2;
-        //         if (diff > n/2 - 1){
-        //             cuts[sizeCuts-1] = n/2-1;
-        //             cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
-        //             diff = diff-(n/2-1);
-        //         }
-        //     }
-        //     cuts[sizeCuts-1] = diff;
-        //     // for (int i =0;i<sizeCuts;i++){
-        //     //     printf("cut: %d\n", cuts[i]);
-        //     // }
-        //     delArrBy1(neck,n);
-        //     printf("\n");
-        //     break;
-        // }
+            //getting the size of the cut outs we need. 
+            int rank = testRankDBseqPCR3(neck,n);
+            int diff = rank-sizeCutDown;
+            if (diff == 0){
+                printf("Rank: %d\n", unCutRank);
+                return;
+            }
+            int *cuts = malloc(sizeof(int));
+            int sizeCuts = 1;
+            if (diff > n/2){
+                cuts[sizeCuts-1] = n/2;
+                cuts = realloc(cuts,++sizeCuts*sizeof(int));
+                diff = diff-n/2;
+                if (diff > n/2 - 1){
+                    cuts[sizeCuts-1] = n/2-1;
+                    cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
+                    diff = diff-(n/2-1);
+                }
+            }
+            cuts[sizeCuts-1] = diff;
+            delArrBy1(neck,n);
+
+            //finding Ranks of the cutouts
+            int currentCutLen;
+            int (*cutLocations)[n] = calloc(sizeCuts, sizeof(*cutLocations));
+            int *cutdownNecklacesRank = malloc(sizeof(int)*sizeCuts);
+            for (int i =0;i<sizeCuts;i++){
+                currentCutLen = cuts[i];
+                if (currentCutLen == 1){
+                    cutdownNecklacesRank[i] = n;
+                    continue;
+                }
+                for (int j=0;j<=n-currentCutLen;j++){
+                    if (j%currentCutLen == 0){
+                        cutLocations[i][j] = 1;
+                    }
+                }
+                cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
+            }
+
+            int unCutRank = getRank(alpha,n);
+            for (int i =0;i<sizeCuts;i++){
+                if (unCutRank > cutdownNecklacesRank[i]){
+                    unCutRank = unCutRank - cuts[i];
+                }
+                else if (unCutRank > cutdownNecklacesRank[i]-cuts[i]){
+                    printf("String does not exist");
+                    return;
+                }
+            }
+            if (unCutRank > sizeCutDown){
+                printf("String does not exist %d\n", unCutRank);
+                break;
+            }
+            printf("Rank: %d\n", unCutRank);
+
+            printf("\n");
+            break;
+        }
+        case 9: {
+            
+        }
     }
 }

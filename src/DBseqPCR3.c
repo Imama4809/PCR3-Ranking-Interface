@@ -271,7 +271,7 @@ void cutDownDB(int *alpha, int* cutdown,int cutdownArrLen, int n){
     int (*cutLocations)[n] = calloc(cutdownArrLen, sizeof(*cutLocations));
     int *cutdownNecklacesRank = malloc(sizeof(int)*cutdownArrLen);
     for (int i =0;i<cutdownArrLen;i++){
-        // printf("%d",cutdown[i]);
+        printf("%d\n",cutdown[i]);
         currentCutLen = cutdown[i];
         if (currentCutLen == 1){
             cutdownNecklacesRank[i] = n;
@@ -306,10 +306,17 @@ void cutDownDB(int *alpha, int* cutdown,int cutdownArrLen, int n){
         }
         delArrBy1(alpha,n);
         for (int i =0;i<primLen;i++){
-            if (isCut){i = i + cutdown[curCutOut-1];isCut=0;}
+            if (isCut){
+                i = i + cutdown[curCutOut-1]+1;
+                isCut=0; 
+                if (i >= primLen){
+                    if (primLen == 1) return;
+                    break;
+                }
+            }
             
             if (primLen == 1) {
-                printf("%d",alpha[i]+1);
+                if (i < primLen) printf("%d",alpha[i]+1);
                 return;
             }
             printf("%d",alpha[i]);
