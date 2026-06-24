@@ -36,8 +36,10 @@ void greatestPCR3Below(int *alpha, int n);
 
 void unrank(int rank, int n, int *string);
 
-void DB(int *alpha, int n);
+int DB(int *alpha, int n, int **stringSize);
 
-void cutDownDB(int *alpha, int *cutdown, int cutdownArrLen, int n);
+int cutDownDB(int *alpha, int sizeCutDown, int n, int** stringSize);
+
+int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n);
 
 // int* createDBseq(int startingStr, int n);

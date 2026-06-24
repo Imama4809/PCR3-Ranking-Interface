@@ -288,6 +288,10 @@ int countUniqueRotationsPCR3(int *arr, int n) {
 }
 
 void greatestPCR3Below(int *alpha, int n){
+    int all_ones = 1;
+    for (int i = 0; i < n; i++)
+        if (alpha[i] != 1) { all_ones = 0; break; }
+    if (all_ones) alpha[n-1] = 0;
     // memcpy(out, alpha, n * sizeof(int));
     for (int i = n-1;i>=0;i--){
         if (alpha[i] == 0) {
@@ -307,5 +311,22 @@ void greatestPCR3Below(int *alpha, int n){
 int smallestPCR3Neck(int *alpha, int n) {
     int i;
     for (i=1; i<n; i++) if (alpha[i] == 0) return 0;
+    return 1;
+}
+
+void printString(int *string, int len){
+    for (int i =0;i<len;i++){printf("%d",string[i]);}
+}
+
+int cmp(const void *a, const void *b) {
+    if (*(int*)a == 1) return 1;
+    if (*(int*)b == 1) return -1;
+    return *(int*)a - *(int*)b;
+}
+
+int areArraysEqual(int *arr1, int *arr2, int n){
+    for (int i =0;i<n;i++){
+        if (arr1[i] != arr2[i]) return 0;
+    }
     return 1;
 }

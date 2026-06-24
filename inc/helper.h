@@ -47,3 +47,9 @@ int countUniqueRotationsPCR3(int *arr, int n);
 void greatestPCR3Below(int *alpha, int n);
 
 int smallestPCR3Neck(int *alpha, int n);
+
+void printString(int *string,int n);
+
+int cmp(const void *a, const void *b);
+
+int areArraysEqual(int *arr1, int *arr2, int n);
