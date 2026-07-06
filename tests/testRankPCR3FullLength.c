@@ -16,8 +16,8 @@ START_TEST(test_lyndon_rank){
     int rank = testRankLyndonWordPCR3(alpha,n);
     ck_assert_int_eq(rank,6);
 }
-
 START_TEST(test_rank_in_seq){
+    //this checks the wraparound for n=9;
     int alpha[10] = {1,0,1,0,0,0,1,1,1};
     int n = 9;
     int rank = testRankDBseqPCR3(alpha,n);
@@ -30,7 +30,6 @@ START_TEST(test_rank_in_seq){
         if (i ==0 ){ ck_assert_int_eq(rank,512); break;}
         ck_assert_int_eq(rank,i);
     }
-
 }
 
 // Create and return the suite for string functions

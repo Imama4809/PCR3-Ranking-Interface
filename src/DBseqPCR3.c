@@ -184,10 +184,7 @@ int getClosestNeckInDBSeq(int rank, int n, int* closestNeck){
     for (int i=0;i<n;i++){
         closestNeck[i] = 1;
         temp = getRank(closestNeck,n);
-        for (int j = 0;j < n;j++) --closestNeck[j];
-        // for (int j = 0;j < n;j++) printf("%d",closestNeck[j]);
-        // printf(" %d ",temp);
-        // printf("\n");
+        for (int j = 0;j < n;j++) --closestNeck[j]; //this is just so that we can set the neck back as the getRank function will increase it by 1
         if (temp < rank){
             closestNeck[i] = 1;
             continue;
@@ -277,11 +274,13 @@ int DB(int *alpha, int n, int **stringPBR) {
 
 // alpha gaurunteed to be an Alt necklace
 int cutDownDB(int *alpha, int sizeCutDown, int n, int **stringPBR){
+    // printf("%d",n);
     int *string = malloc(sizeof(int));
     int stringLen = 0;
 
     int rank = testRankDBseqPCR3(alpha,n);
     int diff = rank-sizeCutDown;
+    // printf("diff: %d\n",diff);
     delArrBy1(alpha,n);
     if (diff == 0){
         stringLen = DB(alpha,n, &string);
@@ -390,7 +389,7 @@ int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
         }
         // for (int j=0;j<n;j++) printf("%d",temp[j]);
         // printf("\n");
-        for (int j=n-1;j>=0;j--){
+        for (int j=n-2;j>=0;j--){
             temp[j+1] = temp[j];
         }
         temp[0] = 0;
@@ -417,6 +416,7 @@ int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
             diff = diff-(n/2-1);
         }
     }
+    
     cuts[sizeCuts-1] = diff;
     delArrBy1(neck,n);
 
@@ -461,4 +461,79 @@ int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
 
     // printf("\n");
     return unCutRank;
+}
+
+void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha){
+    int *copy = malloc(sizeof(int)*n);
+    for (int i =0;i<n;i++) copy[i] = neck[i];
+    
+    int rank = testRankDBseqPCR3(neck,n);
+    int diff = rank-sizeCutDown;
+    // printf("%d %d",diff,rank);
+    if (diff == 0){
+        // printf("hello");
+        if (position < n){
+            for (int i =0;i<position;i++) alpha[i] = 0;
+            for (int i =0;i<n-position;i++) alpha[position+i] = copy[i];
+            return;
+        }
+        unrank(position,n,alpha);
+        return;
+    }
+    int *cuts = malloc(sizeof(int));
+    int sizeCuts = 1;
+    if (diff > n/2){
+        cuts[sizeCuts-1] = n/2;
+        cuts = realloc(cuts,++sizeCuts*sizeof(int));
+        diff = diff-n/2;
+        if (diff > n/2 - 1){
+            cuts[sizeCuts-1] = n/2-1;
+            cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
+            diff = diff-(n/2-1);
+        }
+    }
+    //set up some checks for the wraparound
+    if (position < n){
+        printf("\nCOPY");
+        for (int i =0;i<n;i++) printf("%d",copy[i]);
+        printf("\nCOPY");
+        if (cuts[sizeCuts-1] == 1){
+            for (int i =0;i<position-1;i++) alpha[i] = 0;
+            for (int i =0;i<n-position+1;i++) alpha[position+i] = copy[i];
+            return;
+        }  
+        for (int i =0;i<position;i++) alpha[i] = 0;
+        for (int i =0;i<n-position;i++) alpha[position+i] = copy[i];
+        return;
+    }
+
+    
+    cuts[sizeCuts-1] = diff;
+    delArrBy1(neck,n);
+
+    //finding Ranks of the cutouts
+    int currentCutLen;
+    int (*cutLocations)[n] = calloc(sizeCuts, sizeof(*cutLocations));
+    int *cutdownNecklacesRank = malloc(sizeof(int)*sizeCuts);
+    for (int i =0;i<sizeCuts;i++){
+        currentCutLen = cuts[i];
+        if (currentCutLen == 1){
+            cutdownNecklacesRank[i] = n;
+            continue;
+        }
+        for (int j=0;j<=n-currentCutLen;j++){
+            if (j%currentCutLen == 0){
+                cutLocations[i][j] = 1;
+            }
+        }
+        cutdownNecklacesRank[i] = rankCutDownDB(copy, cutLocations[i],sizeCutDown,n);
+    }
+    int originalPosition = position;
+    for (int i =sizeCuts-1;i>=0;i--){
+        if (originalPosition > cutdownNecklacesRank[i] || cuts[i] == 1){
+            position = position + cuts[i];
+        }
+    }
+    unrank(position,n,alpha);
+    return;
 }

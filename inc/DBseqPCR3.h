@@ -42,4 +42,6 @@ int cutDownDB(int *alpha, int sizeCutDown, int n, int** stringSize);
 
 int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n);
 
+void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha);
+
 // int* createDBseq(int startingStr, int n);

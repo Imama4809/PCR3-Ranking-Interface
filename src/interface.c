@@ -175,13 +175,14 @@ void textInterface(){
             } else if ((1 << n) - 1 == sizeCutDown) {
                 int temp = getRank(alpha,n);
                 if (temp == (1<<n)){printf("String does not exist"); return;}
-                printf("Rank: %d\n", getRank(alpha,n));
+                printf("Rank: %d\n", temp);
                 return;
             } else if ((1 << n) - 2 == sizeCutDown){
                 printf("Note that this is the cut down de Bruijn sequence that cuts out the necklaces of all 1's and all 0's.\n");
                 int temp = getRank(alpha,n);
-                if (temp == (1<<n)){printf("String does not exist"); return;}
-                printf("Rank: %d\n", getRank(alpha,n));
+                if (temp == (1<<n) || temp == n){printf("String does not exist"); return;}
+                if (temp > n) temp--;
+                printf("Rank: %d\n", temp);
                 //NEED TO FIX THIS EDGE CASE
                 return;
             }
@@ -190,8 +191,46 @@ void textInterface(){
             //getting the size of the cut outs we need. 
             int rank = rankCutDownDB(neck,alpha,sizeCutDown,n);
             printf("rank: %d",rank);
+            break;
         }
-        // case 9: {
+        case 9: {
+            int alpha[n];
+            int sizeCutDown;
+            printf("\nwhat size of cut down DB sequence?: ");
+            scanf("%d",&sizeCutDown);
+            n = 31 - __builtin_clz(sizeCutDown) + 1;
+            int *neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
+            int position;
+            printf("input the position you wish to unrank: ");
+            scanf("%d", &position);
+
+            if ((1 << (n-1)) == sizeCutDown) {
+                unrank(position,n,alpha);
+                printf("string: ");
+                for (int i=0;i<n;i++) printf("%d",alpha[i]);
+                return;
+            } else if ((1 << n) - 1 == sizeCutDown) {
+                if (position == (1<<n)){position--;}
+                unrank(position,n,alpha);
+                printf("string: ");
+                for (int i=0;i<n;i++) printf("%d",alpha[i]);
+                return;
+            } else if ((1 << n) - 2 == sizeCutDown){
+                position++;
+                if (position >= (1<<n)){position = (1<<n) - 1;}
+                unrank(position,n,alpha);
+                printf("string: ");
+                for (int i=0;i<n;i++) printf("%d",alpha[i]);
+                return;
+            }
+
+
+
+            unrankCutDownDB(neck,position,sizeCutDown,n,alpha);
+            printf("string: ");
+            for (int i=0;i<n;i++) printf("%d",alpha[i]); 
+            
+        }
             
         //     //EDGE CASES NEED TO BE DELT WITH, IF RANK EXCEEDS BY A LITTLE AND STARTS WITH 0'S IT EXISTS 
         //     int sizeCutDown;
