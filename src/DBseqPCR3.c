@@ -199,6 +199,11 @@ int getClosestNeckInDBSeq(int rank, int n, int* closestNeck){
 }
 
 void unrank(int rank, int n, int *string){
+    if (rank == (1 <<n)){
+        for (int i =0;i<n;i++) string[i] = 1;
+        return;
+    }
+
     if (rank < n){
         for (int i =0;i<rank;i++) string[i] = 0;
         for (int i =0;i<n-rank;i++) string[rank+i] = 1;
@@ -440,9 +445,9 @@ int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
 
     int unCutRank = getRank(alpha,n);
     for (int i =0;i<sizeCuts;i++){
-        if (unCutRank <= cutdownNecklacesRank[i]+cuts[i]+ n%(cuts[i])-1 && unCutRank > cutdownNecklacesRank[i]+ n%(cuts[i])-1 ){
-            printf("%d %d",unCutRank,cutdownNecklacesRank[i]);
-            printf("String does not exist");
+        if (unCutRank < cutdownNecklacesRank[i]+cuts[i]+ n%(cuts[i]) && unCutRank > cutdownNecklacesRank[i]+ n%(cuts[i])-1 ){
+            printf("%d %d ",unCutRank,cutdownNecklacesRank[i]);
+            printf("String does not exist\n");
             return -1;
         }
     }
@@ -487,19 +492,22 @@ void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha
         cuts = realloc(cuts,++sizeCuts*sizeof(int));
         diff = diff-n/2;
         if (diff > n/2 - 1){
+            printf("proc 2, %d %d", diff, (n/2)-1);
             cuts[sizeCuts-1] = n/2-1;
             cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
             diff = diff-(n/2-1);
         }
     }
+    cuts[sizeCuts-1] = diff;
+    delArrBy1(neck,n);
     //set up some checks for the wraparound
     if (position < n){
-        printf("\nCOPY");
-        for (int i =0;i<n;i++) printf("%d",copy[i]);
-        printf("\nCOPY");
+        // printf("\nCOPY");
+        // for (int i =0;i<n;i++) printf("%d",copy[i]);
+        // printf("\nCOPY");
         if (cuts[sizeCuts-1] == 1){
             for (int i =0;i<position-1;i++) alpha[i] = 0;
-            for (int i =0;i<n-position+1;i++) alpha[position+i] = copy[i];
+            for (int i =0;i<n-position;i++) alpha[position+i] = copy[i];
             return;
         }  
         for (int i =0;i<position;i++) alpha[i] = 0;
@@ -508,8 +516,7 @@ void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha
     }
 
     
-    cuts[sizeCuts-1] = diff;
-    delArrBy1(neck,n);
+    
 
     //finding Ranks of the cutouts
     int currentCutLen;
@@ -521,16 +528,28 @@ void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha
             cutdownNecklacesRank[i] = n;
             continue;
         }
-        for (int j=0;j<=n-currentCutLen;j++){
+        for (int j=0;j<n-currentCutLen;j++){
             if (j%currentCutLen == 0){
                 cutLocations[i][j] = 1;
             }
         }
-        cutdownNecklacesRank[i] = rankCutDownDB(copy, cutLocations[i],sizeCutDown,n);
+        cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
+    }
+    // printf("diff: %d\n",diff);
+
+    // for (int i =0;i<sizeCuts;i++){
+    //     printf("cuts: %d, ranks: %d",cuts[i], cutdownNecklacesRank[i]);
+    //     printf("\n");
+    // }
+
+    for (int i = 0;i < sizeCuts;i++){
+        for (int j=0;j< sizeCuts;j++){
+            if (cutdownNecklacesRank[j] > cutdownNecklacesRank[i]) cutdownNecklacesRank[j] = cutdownNecklacesRank[j] - cuts[i];
+        }
     }
     int originalPosition = position;
     for (int i =sizeCuts-1;i>=0;i--){
-        if (originalPosition > cutdownNecklacesRank[i] || cuts[i] == 1){
+        if (originalPosition > cutdownNecklacesRank[i]+cuts[i]-1 || cuts[i] == 1){
             position = position + cuts[i];
         }
     }

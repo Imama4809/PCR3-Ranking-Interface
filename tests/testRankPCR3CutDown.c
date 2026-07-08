@@ -53,7 +53,7 @@ START_TEST(testingRankingCutDownDB){
     int *neck2;
     int *string = NULL;
     int stringLen;
-    for (int sizeCutDown = 100;sizeCutDown <110;sizeCutDown++){
+    for (int sizeCutDown = 70;sizeCutDown <=80;sizeCutDown++){
         n = 31 - __builtin_clz(sizeCutDown)+1;
         neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
         neck2 = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
@@ -61,12 +61,10 @@ START_TEST(testingRankingCutDownDB){
             for (int i=0;i<n;i++) neck[i]=1;
             neck[n-1] = 0;
             stringLen = DB(neck,n,&string);
-            return;
         } else if ((1 << n) - 1 == sizeCutDown) {
             for (int i=0;i<n;i++) neck[i]=1;
             neck[n-1] = 0;
             stringLen = DB(neck,n,&string);
-            return;
         } else if ((1 << n) - 2 == sizeCutDown){
             for (int i=0;i<n;i++) neck[i]=1;
             printf("1");
@@ -80,11 +78,9 @@ START_TEST(testingRankingCutDownDB){
         for (int i=0;i<n;i++) window[i] = string[i];
         for (int i =0;i<stringLen;i++){
             for (int j=0;j<n;j++) copy[j] = window[j];
-            // for (int j=0;j<n;j++) printf("%d",copy[j]);
             neck2 = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
             int r = rankCutDownDB(neck2,copy,sizeCutDown,n);
             // printf("%d %d %d",n, r, (i+n)%(sizeCutDown));
-            // printf("\n");
             // delArrBy1(window,n);
             ck_assert_int_eq(r,sizeCutDown-i);
             for (int j=0;j<n-1;j++){
@@ -103,7 +99,7 @@ START_TEST(testingUnrankingCutDownDB){
     int stringLen;
     // int sizeCutDown = 50;
     int *unrankedString = malloc(sizeof(int));
-    for (int sizeCutDown = 100;sizeCutDown <=110;sizeCutDown++){
+    for (int sizeCutDown = 50;sizeCutDown <=60;sizeCutDown++){
         n = 31 - __builtin_clz(sizeCutDown)+1;
         free(unrankedString);
         unrankedString = malloc(sizeof(int)*n);
