@@ -41,9 +41,21 @@ int checkIfNextBest0DigitsAreAllZero(int arr[], int startIndex, int max0, int n)
 int confirmIfValid(int arr[], int beforeNecklace[], int seperation, int n){
     int afterNecklace[n];
     if (!isNecklacePCR3(beforeNecklace,n)) {return 0;}
-    int integerRepresentation = binToNum(beforeNecklace,n);
-    integerRepresentation--;
-    numToBin(integerRepresentation,n,afterNecklace);
+
+    for (int i =0;i<n;i++){
+        afterNecklace[i] = beforeNecklace[i];
+    }
+    int i =n-1;
+    while (afterNecklace[i] == 0){
+        afterNecklace[i] = 1;
+        i--;
+    }
+    afterNecklace[i] = 0;
+    // int integerRepresentation = binToNum(beforeNecklace,n);
+    // integerRepresentation--;
+    // numToBin(integerRepresentation,n,afterNecklace);
+    
+    
     greatestPCR3Below(afterNecklace,n);
     for (int i = seperation;i<n;i++){
         if (afterNecklace[i-seperation] != arr[i]){
@@ -488,16 +500,18 @@ void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha
     int *cuts = malloc(sizeof(int));
     int sizeCuts = 1;
     if (diff > n/2){
+        // printf("proc, %d %d",diff, n/2);
         cuts[sizeCuts-1] = n/2;
         cuts = realloc(cuts,++sizeCuts*sizeof(int));
         diff = diff-n/2;
         if (diff > n/2 - 1){
-            printf("proc 2, %d %d", diff, (n/2)-1);
+            // printf("proc 2, %d %d", diff, (n/2)-1);
             cuts[sizeCuts-1] = n/2-1;
             cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
             diff = diff-(n/2-1);
         }
     }
+    // printf("sizeCuts: %d\n",sizeCuts);
     cuts[sizeCuts-1] = diff;
     delArrBy1(neck,n);
     //set up some checks for the wraparound
@@ -533,6 +547,8 @@ void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha
                 cutLocations[i][j] = 1;
             }
         }
+        // for (int j=0;j<n;j++) printf("%d",cutLocations[i][j]);
+        // printf("\n");
         cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
     }
     // printf("diff: %d\n",diff);
@@ -546,10 +562,16 @@ void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha
         for (int j=0;j< sizeCuts;j++){
             if (cutdownNecklacesRank[j] > cutdownNecklacesRank[i]) cutdownNecklacesRank[j] = cutdownNecklacesRank[j] - cuts[i];
         }
+        if (n%cuts[i] == 0) cutdownNecklacesRank[i] += cuts[i]-1;
     }
+
+    // for (int i =0;i<sizeCuts;i++){
+    //     printf("cuts: %d, ranks: %d",cuts[i], cutdownNecklacesRank[i]);
+    //     printf("\n");
+    // }
     int originalPosition = position;
     for (int i =sizeCuts-1;i>=0;i--){
-        if (originalPosition > cutdownNecklacesRank[i]+cuts[i]-1 || cuts[i] == 1){
+        if (originalPosition > cutdownNecklacesRank[i] || cuts[i] == 1){
             position = position + cuts[i];
         }
     }

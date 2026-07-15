@@ -240,6 +240,8 @@ void findNextGreatestNecklace(int string[], int n){
     return;
 }
 
+
+//You need to change this to match the description of the algorithm described in the paper.
 int smallestPCR3StrictlyAbove(int *alpha, int n){
     int *out = malloc(sizeof(int)*n);
     int foundFirstZero=0;
@@ -248,7 +250,7 @@ int smallestPCR3StrictlyAbove(int *alpha, int n){
     for (int i = 1;i<=n;i++){
         if (!foundFirstZero){
             if (out[n-i] == 1){ 
-                continue; //this finds the first time from the left side we find a zero
+                continue; //this finds the first time from the right side we find a zero
             } else {
                 out[n-i] = 1; //this switches the first zero to a one
                 for (int j=1;j<i;j++){out[n-i+j] = 0;} // this switches everything after the first zero to a 0
@@ -257,7 +259,6 @@ int smallestPCR3StrictlyAbove(int *alpha, int n){
         }
         if (isNecklacePCR3(out,n) && isArrayBigger(out,alpha,n)){memcpy(alpha,out,n*sizeof(int));return 1;} //checking it its a necklace
         else {
-            // printf("BURH");
             //this keeps moving the one to the left until it lands on a necklace. 
             out[n-i] = 1;
             out[n-i+1] = 0;
