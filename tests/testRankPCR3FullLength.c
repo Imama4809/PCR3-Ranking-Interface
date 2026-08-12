@@ -1,5 +1,5 @@
 #include <check.h>
-#include "trials.h"
+#include "../inc/trials.h"
 
 
 
