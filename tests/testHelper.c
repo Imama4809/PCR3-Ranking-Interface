@@ -74,18 +74,18 @@ START_TEST(test_greatestPCR3Below_all_8bit_strings) {
     memcpy(actual, alpha, sizeof(alpha));
     greatestPCR3Below(actual, N);
 
-    for (int i =0;i<N;i++){
-        printf("%d",alpha[i]);
-    }
-    printf(" ");
-    for (int i =0;i<N;i++){
-        printf("%d",expected[i]);
-    }
-    printf(" ");
-    for (int i =0;i<N;i++){
-        printf("%d",actual[i]);
-    }
-    printf("\n");
+    // for (int i =0;i<N;i++){
+    //     printf("%d",alpha[i]);
+    // }
+    // printf(" ");
+    // for (int i =0;i<N;i++){
+    //     printf("%d",expected[i]);
+    // }
+    // printf(" ");
+    // for (int i =0;i<N;i++){
+    //     printf("%d",actual[i]);
+    // }
+    // printf("\n");
     
     ck_assert_msg(areArraysEqual(actual, expected, N),
                   "Mismatch for input %d: got wrong necklace", _i);

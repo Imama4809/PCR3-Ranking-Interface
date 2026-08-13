@@ -292,7 +292,7 @@ void greatestPCR3Below(int *alpha, int n){
     int all_ones = 1;
     for (int i = 0; i < n; i++)
         if (alpha[i] != 1) { all_ones = 0; break; }
-    if (all_ones) alpha[n-1] = 0;
+    if (all_ones){ alpha[n-1] = 0; return; }
     // memcpy(out, alpha, n * sizeof(int));
     for (int i = n-1;i>=0;i--){
         if (alpha[i] == 0) {
