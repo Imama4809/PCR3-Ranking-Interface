@@ -18,6 +18,7 @@ int PCR3CountN(int arr[], int n){
         for (int j=i+1;j<n;j++){
             subt[j] = 2;
         }
+        // GreatestNecklaceSmallerThan(dum,n);
         // for (int j=1;j<=n;j++){
             // if (n%j==0) {
                 // for (int l = n/j;l>0;l--){

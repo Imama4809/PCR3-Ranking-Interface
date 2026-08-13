@@ -80,7 +80,7 @@ START_TEST(testingRankingCutDownDB){
             for (int j=0;j<n;j++) copy[j] = window[j];
             neck2 = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
             int r = rankCutDownDB(neck2,copy,sizeCutDown,n);
-            // printf("%d %d %d",n, r, (i+n)%(sizeCutDown));
+            fflush(stdout);
             // delArrBy1(window,n);
             ck_assert_int_eq(r,sizeCutDown-i);
             for (int j=0;j<n-1;j++){
