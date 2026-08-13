@@ -246,8 +246,8 @@ int smallestPCR3StrictlyAbove(int *alpha, int n){
     int *out = malloc(sizeof(int)*n);
     int foundFirstZero=0;
     memcpy(out, alpha, n* sizeof(int));
-    if (isNecklacePCR3(out,n)){memcpy(alpha,out,n*sizeof(int));return 1;}
-    for (int i = 1;i<=n;i++){
+    // if (isNecklacePCR3(out,n)){memcpy(alpha,out,n*sizeof(int));return 1;}
+    for (int i = 1;i<=n+1;i++){
         if (!foundFirstZero){
             if (out[n-i] == 1){ 
                 continue; //this finds the first time from the right side we find a zero
