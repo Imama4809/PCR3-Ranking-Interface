@@ -24,7 +24,7 @@ int maxZeroBetweenFrontAndBackNextNecklace(int *arr,int n){
     for (int i = 0; i < n - count; i++) {arr[i] = arr[i + count];}
     for (int i = n - count; i < n; i++) {arr[i] = 1;}
     // printf(" ");
-    smallestPCR3StrictlyAbove(arr,n);
+    greatestPCR3Below(arr,n);
     return count;
 }
 
@@ -73,12 +73,10 @@ int getCount(int givenString[],int startIndex, int maxLen, int isMax0InWrapAroun
     // int areAllIndiciesAfterMax0EqualTo1;
     if (startIndex == 0 || isMax0InWrapAround) { 
         int val = maxZeroBetweenFrontAndBackNextNecklace(arr,n);
-        if (!confirmIfValid(givenString,arr,val,n)){return -1;}
         sumArrBy1(arr,n);
-        return PCR3Count(arr,n) -primLength(arr,n)  + val;
+        return PCR3Count(arr,n) + val;
     } else {
         moveFrontUntilEndOfMax0ToBack(arr,n,startIndex+maxLen);
-        if (!confirmIfValid(givenString,arr,startIndex+maxLen,n)){return -1;}
         sumArrBy1(arr,n);
         return PCR3Count(arr,n)-primLength(arr,n) +startIndex+maxLen;
     }

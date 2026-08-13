@@ -53,7 +53,7 @@ START_TEST(testingRankingCutDownDB){
     int *neck2;
     int *string = NULL;
     int stringLen;
-    for (int sizeCutDown = 70;sizeCutDown <=80;sizeCutDown++){
+    for (int sizeCutDown = 70;sizeCutDown <=90;sizeCutDown++){
         n = 31 - __builtin_clz(sizeCutDown)+1;
         neck = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
         neck2 = testGetClosestNeckInDBSeqPCR3(sizeCutDown,n);
