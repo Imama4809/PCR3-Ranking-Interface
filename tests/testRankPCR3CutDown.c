@@ -1,5 +1,5 @@
 #include <check.h>
-#include "trials.h"
+#include "../inc/trials.h"
 
 START_TEST(test_cut_down_length){
     int n;

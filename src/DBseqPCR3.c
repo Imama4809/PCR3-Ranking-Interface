@@ -71,7 +71,7 @@ int getCount(int givenString[],int startIndex, int maxLen, int isMax0InWrapAroun
     int arr[n];
     for (int i=0;i<n;i++){arr[i] = givenString[i];}
     // int areAllIndiciesAfterMax0EqualTo1;
-    if (startIndex == 0 || isMax0InWrapAround) { // get rid of isMax0InWrapAround and see if it still works
+    if (startIndex == 0 || isMax0InWrapAround) { 
         int val = maxZeroBetweenFrontAndBackNextNecklace(arr,n);
         if (!confirmIfValid(givenString,arr,val,n)){return -1;}
         sumArrBy1(arr,n);
@@ -99,87 +99,13 @@ int getRank(int arr[],int n) {
         sumArrBy1(arr,n);
         return PCR3Count(arr,n);
     }
+    int guessStartIndex; 
+    int guessMaxLen;
+    int guessIsMax0InWrapAround;
 
-    int maxLen = 0;
-    int startIndex = -1;
-    
-    int prefixLen = 0;
-    int suffixLen = 0;
-
-
-    // int areAllIndiciesAfterMax0EqualTo1 =1;
-    int isMax0InWrapAround = 0;
-
-    // Linear scan for the usual max run
-    int bestLen = 0, bestStart = -1;
-    int curLen = 0, curStart = -1;
-
-    for (int i = 0; i < n; i++) {
-        if (arr[i] == 0) {
-            if (curLen == 0) curStart = i;
-            curLen++;
-            if (curLen > bestLen) {
-                bestLen = curLen;
-                bestStart = curStart;
-            }
-        } else {
-            curLen = 0;
-        }
-    }
-
-    // Consider wrap-around only if first and last elements are zero
-    if (arr[0] == 0 && arr[n - 1] == 0) {
-        // Count zeros at start
-        while (prefixLen < n && arr[prefixLen] == 0) prefixLen++;
-
-        // Count zeros at end
-        int j = n - 1;
-        while (j >= 0 && arr[j] == 0) { suffixLen++; j--; }
-
-        int wrapLen = prefixLen + suffixLen;
-
-        // If the entire array is zeros, max is n starting at 0
-        if (wrapLen >= n) {
-            bestLen = n;
-            bestStart = 0;
-        } else if (wrapLen > bestLen) {
-            isMax0InWrapAround = 1;
-            bestLen = wrapLen;
-            // Start where the suffix run begins
-            bestStart = j + 1;  // j stopped on the first non-zero before the suffix
-        }
-    }
-
-    maxLen = bestLen;
-
-    int arrayOfMax0[n];
-    int indexOfArrayOfMax0 = 0;
-
-    //for loop gets all of the places in the array where the max0 is present
-    for (int i=0;i<n;i++){
-        if (checkIfNextBest0DigitsAreAllZero(arr,i,maxLen,n)){ 
-            arrayOfMax0[indexOfArrayOfMax0] = i;
-            i = i+maxLen;
-            indexOfArrayOfMax0++;
-        }
-    }
-
+    guessStartIndex = pcr3_shift_position(arr,n,&guessMaxLen,&guessIsMax0InWrapAround);
     //following for loop will check all the differences between these values and take the smallest one
-
-    startIndex = (bestLen >= 0) ? bestStart : 0;
-    // printf("SI: %d, ML: %d ",startIndex,maxLen);
-    if (indexOfArrayOfMax0 == 1){
-        return getCount(arr,startIndex,maxLen,isMax0InWrapAround,n);
-    } else {
-        for (int j=0;j<indexOfArrayOfMax0;j++){
-            if (arrayOfMax0[j]+maxLen > n){isMax0InWrapAround = 1;}
-            else {isMax0InWrapAround = 0;}
-            if (getCount(arr,arrayOfMax0[j],maxLen,isMax0InWrapAround,n) != -1){
-                return getCount(arr,arrayOfMax0[j],maxLen,isMax0InWrapAround,n);
-            }  
-        }
-    }
-    return -1;
+    return getCount(arr,guessStartIndex,guessMaxLen,guessIsMax0InWrapAround,n);
 }
 //, int **closestNecklace, int* closestNecklacePosition
 
