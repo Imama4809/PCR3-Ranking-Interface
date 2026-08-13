@@ -53,3 +53,6 @@ void printString(int *string,int n);
 int cmp(const void *a, const void *b);
 
 int areArraysEqual(int *arr1, int *arr2, int n);
+
+
+int pcr3_shift_position(const int *s, int n, int *out_zeros, int *out_wraps);

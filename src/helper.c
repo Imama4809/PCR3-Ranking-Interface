@@ -331,3 +331,47 @@ int areArraysEqual(int *arr1, int *arr2, int n){
     }
     return 1;
 }
+
+int pcr3_shift_position(const int *s, int n, int *out_zeros, int *out_wraps) {
+    if (n == 0) {
+        if (out_zeros) *out_zeros = 0;
+        if (out_wraps) *out_wraps = 0;
+        return 0;
+    }
+
+    int *ss = malloc(2 * n * sizeof(int));
+    memcpy(ss, s, n * sizeof(int));
+    memcpy(ss + n, s, n * sizeof(int));
+
+    int *f = malloc((2 * n) * sizeof(int));
+    for (int i = 0; i < 2 * n; i++) f[i] = -1;
+
+    int start = 0;
+    for (int j = 1; j < 2 * n; j++) {
+        int sj = ss[j];
+        int i = f[j - start - 1];
+        while (i != -1 && sj != ss[start + i + 1]) {
+            if (sj < ss[start + i + 1]) start = j - i - 1;
+            i = f[i];
+        }
+        if (sj != ss[start + i + 1]) {
+            if (sj < ss[start]) start = j;
+            f[j - start] = -1;
+        } else {
+            f[j - start] = i + 1;
+        }
+    }
+
+    free(ss);
+    free(f);
+
+    int zeros = 0;
+    while (zeros < n && s[(start + zeros) % n] == 0) {
+        zeros++;
+    }
+
+    if (out_zeros) *out_zeros = zeros;
+    if (out_wraps) *out_wraps = (start + zeros) > n;
+
+    return start;
+}
