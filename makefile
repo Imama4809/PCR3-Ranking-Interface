@@ -30,7 +30,7 @@ test: $(TARGET)
 	./bin/$(TARGET)
 
 clean:
-	rm -f obj/*.o bin/*
+	rm -rf obj/*.o bin/*
 	rm -f asan_obj/*.o bin/*_asan
 
 # ---- AddressSanitizer build ----
