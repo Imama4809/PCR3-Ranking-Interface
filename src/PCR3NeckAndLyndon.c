@@ -1,4 +1,5 @@
 #include "../inc/PCR3NeckAndLyndon.h"
+#include "../inc/helper.h"
 
 int PCR3CountN(int arr[], int n){
     int dum[n];
@@ -18,17 +19,8 @@ int PCR3CountN(int arr[], int n){
         for (int j=i+1;j<n;j++){
             subt[j] = 2;
         }
-        // GreatestNecklaceSmallerThan(dum,n);
-        // for (int j=1;j<=n;j++){
-            // if (n%j==0) {
-                // for (int l = n/j;l>0;l--){
-                    // total += (L(n/j,0,dum) - L(n/j,0,subt))*n/j;
-                    total += N(n,0,dum) - N(n,0,subt);
-                // }
-                // printf("(%d - %d) * %d",L(n/j,0,dum),L(n/j,0,subt),n/j);
-            // }
-        // }
-        
+
+        total += N(n,0,dum) - N(n,0,subt);
     }
     total++;
     return total;
@@ -53,16 +45,7 @@ int PCR3CountL(int arr[], int n){
         for (int j=i+1;j<n;j++){
             subt[j] = 2;
         }
-        // for (int j=1;j<=n;j++){
-            // if (n%j==0) {
-                // for (int l = n/j;l>0;l--){
-                    // total += (L(n/j,0,dum) - L(n/j,0,subt))*n/j;
-                    total += L(n,0,dum) - L(n,0,subt);
-                // }
-                // printf("(%d - %d) * %d",L(n/j,0,dum),L(n/j,0,subt),n/j);
-            // }
-        // }
-        
+        total += L(n,0,dum) - L(n,0,subt);
     }
     total++;
     return total;
@@ -88,26 +71,47 @@ int PCR3Count(int arr[], int n){
             subt[j] = 2;
         }
         GreatestNecklaceSmallerThan(dum,n);
-        // N(n,0,dum)-N(n,0,subt);
         for (int l=1;l<=n;l++){
-            
-            if (n%l==0) {
-                // printf("\n");
-                // for (int m = 0;m<n/l;m++){printf("%d",dum[m]);}
-                // printf(" - ");
-                // for (int m = 0;m<n/l;m++){printf("%d",subt[m]);}
-                // for (int l = n/j;l>0;l--){
-                    total += ((L(n/l,0,dum) - L(n/l,0,subt))*(n/l));
-                    // total += N(n/j,0,dum);
-                // }
-                
-                // printf("  * %d, ",L(n/l,0,dum) - L(n/l,0,subt));
-            }
-            
+            if (n%l==0) {total += ((L(n/l,0,dum) - L(n/l,0,subt))*(n/l));}            
         }
-        // total++;
         
     }
     total++;
+    return total;
+}
+
+
+int PCR3CountNew(int arr[], int n){
+    int dum[n];
+    int subt[n];
+    int subt2[n];
+    int total = 0;
+    int othTotal= 0;
+    if (arr[0] == 1) return pow(2,n);
+    int t = 0;
+    for (int i=0;i<n;i++){t+= arr[i];}
+    if (t== 2*n) return 0;
+    for (int i=0;i<n;i++){
+        for (int j=0;j<i;j++){
+            dum[j] = 1;
+        }
+        for (int j=i;j<n;j++){
+            dum[j] = arr[j-i];
+        }
+        for (int j=0;j<i;j++){
+            subt2[j] = 1;
+        }
+        for (int j=i;j<n;j++){
+            subt2[j] = 2;
+        }
+        GreatestNecklaceSmallerThan(dum,n);
+        // if (isNecklacePCR3(dum,n)) {GreatestNecklaceSmallerThan(dum,n);}
+        for (int l=1;l<=n;l++){
+            if (n%l==0) {
+                total += ((L(n/l,0,subt2) - L(n/l,0,dum))*(n/l));
+            }            
+        }
+        
+    }
     return total;
 }

@@ -177,11 +177,12 @@ bool is_zeros_then_ones(const int arr[], int n, int *numZeros) {
     // remaining entries must all be 1
     for (int i = *numZeros; i < n; i++) {
         if (arr[i] != 1) {
+            
             return false;
         }
     }
-    
-    if (arr[0] == 1) *numZeros = pow(2,n);
+    *numZeros = pow(2,n)- *numZeros;
+    // if (arr[0] == 1) *numZeros = 0;
     return true;
 }
 
@@ -290,6 +291,19 @@ int countUniqueRotationsPCR3(int *arr, int n) {
 
 void greatestPCR3Below(int *alpha, int n){
     int all_ones = 1;
+    int *test = malloc(sizeof(int)*n);
+    test[0] = 1;
+    for (int i = 1; i < n; i++) test[i] = 0;
+    // printf("alpha:");
+    // for (int i =0;i<n;i++) printf("%d",alpha[i]);
+    // printf("test:");
+    // for (int i =0;i<n;i++) printf("%d",test[i]);
+    if (areArraysEqual(test,alpha,n)){ 
+        alpha[0] = 0;
+        free(test);
+        return;
+    }
+    free(test);
     for (int i = 0; i < n; i++)
         if (alpha[i] != 1) { all_ones = 0; break; }
     if (all_ones){ alpha[n-1] = 0; return; }
@@ -310,9 +324,8 @@ void greatestPCR3Below(int *alpha, int n){
 }
 
 int smallestPCR3Neck(int *alpha, int n) {
-    int i;
-    for (i=1; i<n; i++) if (alpha[i] == 0) return 0;
-    return 1;
+    if (alpha[0] == 0) return 1;
+    return 0;
 }
 
 void printString(int *string, int len){

@@ -31,3 +31,24 @@ test: $(TARGET)
 
 clean:
 	rm -f obj/*.o bin/*
+	rm -f asan_obj/*.o bin/*_asan
+
+# ---- AddressSanitizer build ----
+ASAN_FLAGS = -fsanitize=address -fno-omit-frame-pointer
+ASAN_OBJ = $(patsubst src/%.c,asan_obj/%.o,$(SRC))
+ASAN_OBJ_EXCLUDING_MAIN = $(filter-out asan_obj/main.o, $(ASAN_OBJ))
+ASAN_TARGET = run_tests_asan
+
+asan_obj:
+	mkdir -p asan_obj
+
+asan_obj/%.o: src/%.c | asan_obj
+	$(CC) $(CFLAGS) $(ASAN_FLAGS) -c $< -o $@
+
+$(ASAN_TARGET): bin $(TEST_SRC) $(ASAN_OBJ)
+	$(CC) $(CFLAGS) $(ASAN_FLAGS) $(TEST_SRC) $(ASAN_OBJ_EXCLUDING_MAIN) $(CHECK_FLAGS) -o bin/$(ASAN_TARGET)
+
+test-asan: $(ASAN_TARGET)
+	./bin/$(ASAN_TARGET)
+
+.PHONY: program test clean asan_obj test-asan

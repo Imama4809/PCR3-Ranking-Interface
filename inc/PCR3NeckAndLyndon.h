@@ -6,3 +6,5 @@ int PCR3CountN(int arr[], int n);
 int PCR3CountL(int arr[], int n);
 
 int PCR3Count(int arr[], int n);
+
+int PCR3CountNew(int arr[], int n);

@@ -38,9 +38,15 @@ void unrank(int rank, int n, int *string);
 
 int DB(int *alpha, int n, int **stringSize);
 
+int newCutDownDB(int sizeCutDown, int **stringPBR);
+
 int cutDownDB(int *alpha, int sizeCutDown, int n, int** stringSize);
 
+int newRankCutDownDB(int *alpha,int sizeCutDown);
+
 int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n);
+
+void newUnrankCutDownDB(int position, int size,int* strBPR);
 
 void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha);
 

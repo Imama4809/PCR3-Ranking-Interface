@@ -2,6 +2,7 @@
 #include "../inc/PCR3NeckAndLyndon.h"
 #include "../inc/helper.h"
 #include "../inc/trials.h"
+#include <math.h>
 
 void moveFrontUntilEndOfMax0ToBack(int *arr,int n,int place){
     if (!arr || n <= 0) return;
@@ -73,12 +74,15 @@ int getCount(int givenString[],int startIndex, int maxLen, int isMax0InWrapAroun
     // int areAllIndiciesAfterMax0EqualTo1;
     if (startIndex == 0 || isMax0InWrapAround) { 
         int val = maxZeroBetweenFrontAndBackNextNecklace(arr,n);
+        // for (int i=0;i<n;i++)printf("%d",arr[i]);
+        // printf(" ");
         sumArrBy1(arr,n);
-        return PCR3Count(arr,n) + val;
+        // printf("%d %d %d ", PCR3CountNew(arr,n), primLength(arr,n), val);
+        return PCR3CountNew(arr,n) - val;
     } else {
         moveFrontUntilEndOfMax0ToBack(arr,n,startIndex+maxLen);
         sumArrBy1(arr,n);
-        return PCR3Count(arr,n)-primLength(arr,n) +startIndex+maxLen;
+        return PCR3CountNew(arr,n)+primLength(arr,n) -startIndex-maxLen;
     }
 }
 
@@ -95,7 +99,9 @@ int getRank(int arr[],int n) {
         // for (int m=0;m<n;m++){printf("%d",arr[m]);}
         // printf("   ");
         sumArrBy1(arr,n);
-        return PCR3Count(arr,n);
+        int retVal = PCR3CountNew(arr,n);
+        delArrBy1(arr,n);
+        return retVal;
     }
     int guessStartIndex; 
     int guessMaxLen;
@@ -117,15 +123,16 @@ void switchIndex(int *arr, int i, int j){
 int getClosestNeckInDBSeq(int rank, int n, int* closestNeck){
     for (int i = 0;i < n;i++) closestNeck[i] = 0;
     int temp;
-    for (int i=0;i<n;i++){
+    // printf("hello");
+    closestNeck[0] = 1;
+    for (int i=1;i<n;i++){
+        fflush(stdout);
         closestNeck[i] = 1;
         temp = getRank(closestNeck,n);
-        for (int j = 0;j < n;j++) --closestNeck[j]; //this is just so that we can set the neck back as the getRank function will increase it by 1
-        if (temp < rank){
-            closestNeck[i] = 1;
+        if (temp > rank){
             continue;
         }
-        else if (temp < rank + n){
+        else if (temp > rank -n){
             return temp;
         } else {
             closestNeck[i] = 0;
@@ -135,64 +142,58 @@ int getClosestNeckInDBSeq(int rank, int n, int* closestNeck){
 }
 
 void unrank(int rank, int n, int *string){
-    if (rank == (1 <<n)){
-        for (int i =0;i<n;i++) string[i] = 1;
-        return;
-    }
-
-    if (rank < n){
-        for (int i =0;i<rank;i++) string[i] = 0;
-        for (int i =0;i<n-rank;i++) string[rank+i] = 1;
+    if (rank >= (int)pow(2,n) - n){
+        for (int i =0;i<(int)pow(2,n) - rank;i++) string[i] = 0;
+        for (int i =(int)pow(2,n) - rank;i<n;i++) string[i] = 1;
         return;
     }
 
     // int *neck = malloc(sizeof(int)*n);
-    int *beta1 = malloc(sizeof(int)*n);
-    int *beta2 = malloc(sizeof(int)*n);
+    int *beta1 = malloc(sizeof(int)*n*2);
     int neckPos = getClosestNeckInDBSeq(rank,n,beta1); // O(n)
-    for (int i=0;i<n;i++) beta2[i] = beta1[i];
+    if (neckPos == rank){
+        for (int i=0;i<n;i++){
+            string[i] = beta1[i];
+        }
+        free(beta1);
+        return;
+    }
+    for (int i=0;i<n;i++) beta1[i+n] = beta1[i];
     // beta2[n-1] = 1;
-    greatestPCR3Below(beta2,n); // O(n)
+    greatestPCR3Below(beta1+n,n); // O(n)
     int shift =  neckPos - rank;
     if (shift == 0){
         for (int i=0;i<n;i++)string[i] = beta1[i];
         return;
     }
-    int b1p = shortest_repeating_length(beta1,n); // O(n)
-    // int b2p = shortest_repeating_length(beta2,n); // O(n)
-    // printf(" shift : %d ", shift);
-    // printf(" beta1 :");
-    // for (int i = 0;i<b1p;i++) printf("%d",beta1[i]);
-    // printf(" beta2 :");
-    // for (int i = 0;i<b2p;i++) printf("%d",beta2[i]);
-    if (b1p == n){
-        for (int i = 0;i<n-shift;i++){
-            string[i] = beta1[i+shift];
+    int len = primLength(beta1,n);
+    // printf("primlen: %d\n",len);
+    if (primLength(beta1,n) != n){
+        for (int i =0;i<n;i++){
+            beta1[i+len] = beta1[i+n];
         }
-        for (int i =0;i<shift;i++){
-            string[n-shift + i] = beta2[i];
-        }
-    } else {
-        for (int i = 0;i<b1p-shift;i++){
-            string[i] = beta1[i+shift];
-        }
-        for (int i =0;i<n-b1p+shift;i++){
-            string[b1p-shift + i] = beta2[i];
-        }
+    }
+    int offset = rank-neckPos;
+    // for (int i =0;i<n;i++) printf("%d",beta1[i]);
+    // printf("\n");
+    // for (int i =0;i<n;i++) printf("%d",beta1[i+n]);
+    // printf("\n");
+    for (int i=0;i<n;i++){
+        string[i] = beta1[i+offset];
     }
     // printf(" string :");
     // for (int i = 0;i<n;i++) printf("%d",string[i]);
     // printf(" \n");
     free(beta1);
-    free(beta2);
     return;
 }
 
 
 int DB(int *alpha, int n, int **stringPBR) {
-    int *string = malloc(sizeof(int));
+    int *string = malloc(sizeof(int)*1);
     int stringLen = 0;
-    while (!smallestPCR3Neck(alpha,n)) {
+    // printf("Hello");
+    while (1) {
         for (int i =0;i<primLength(alpha,n);i++){
             string[stringLen++] = alpha[i];
             if (primLength(alpha,n) == 1){
@@ -206,10 +207,127 @@ int DB(int *alpha, int n, int **stringPBR) {
         greatestPCR3Below(alpha,n);
         // printf("\n");
     }    
+    
     // stringPBR = string;
 
     return -1;
 }
+
+
+
+
+
+
+
+//the following are the old cut down generation algorithms
+
+int newCutDownDB(int sizeCutDown, int **stringPBR){
+    int n = (sizeCutDown == 0) ? 1 : 32 - __builtin_clz(sizeCutDown);
+    // printf("%d",n);
+    int *closestNeck = malloc(sizeof(int)*n);
+    sizeCutDown = pow(2,n)- sizeCutDown;
+    int unCutDBSeq = getClosestNeckInDBSeq(sizeCutDown,n,closestNeck);
+    // for (int i=0;i<n;i++) printf("%d",closestNeck[i]);
+    // printf("\n");
+    int *string = malloc(sizeof(int));
+    int diff = sizeCutDown-unCutDBSeq;
+    // printf("%d",diff);
+    // printf("\n");
+    fflush(stdout);
+    int *cuts = malloc(sizeof(int));
+    int stringLen = 0;
+
+     if (diff == 0){
+        stringLen = DB(closestNeck,n, &string);
+        *stringPBR = string;
+        return stringLen;
+    }
+    //the following code just gets all cuts and puts them in an array for easy access
+    /***********************/
+    int sizeCuts = 1;
+    if (diff > (n+1)/2){
+        cuts[sizeCuts-1] = (n+1)/2;
+        cuts = realloc(cuts,++sizeCuts*sizeof(int));
+        diff = diff-(n+1)/2;
+        // if (diff > n/2 - 1){
+        //     cuts[sizeCuts-1] = n/2-1;
+        //     cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
+        //     diff = diff-(n/2-1);
+        // }
+    }
+    cuts[sizeCuts-1] = diff;
+    /***********************/
+    qsort(cuts,sizeCuts,sizeof(int),cmp);
+
+
+    //the following code will get all of the strings that will have values cut out of them
+    /***********************/
+    int currentCutLen;
+    int (*cutLocations)[n] = calloc(sizeCuts, sizeof(*cutLocations));
+    int *cutdownNecklacesRank = malloc(sizeof(int)*sizeCuts);
+    for (int i =0;i<sizeCuts;i++){
+        
+        // printf("%d\n",string[i]);
+        currentCutLen = cuts[i];
+        if (currentCutLen == 1){
+            cutdownNecklacesRank[i] = pow(2,n)-n;
+            continue;
+        }
+        for (int j=0;j<=n-currentCutLen;j++){
+            if (j%currentCutLen == 0){
+                cutLocations[i][j] = 1;
+            }
+        }
+        cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
+    }
+    int curCutOut= 0;
+    int isCut = 0;
+    /***********************/
+    int primLen;
+    while (1) {
+        primLen = primLength(closestNeck,n);
+        if ((curCutOut < sizeCuts) && getRank(closestNeck,n) == cutdownNecklacesRank[curCutOut]){
+            isCut = 1; 
+            // printf("HERE");
+        }
+        // delArrBy1(closestNeck,n);
+        for (int i =0;i<primLen;i++){
+            if (isCut){
+                i = i + cuts[curCutOut];
+                isCut=0; 
+                curCutOut++;
+                if (primLen == 1) {
+                    *stringPBR = string;
+                    return stringLen;
+                }
+                if (i >= primLen){
+                    *stringPBR = string;
+                    break;
+                }
+            }
+            if (primLen == 1) {
+                if (i < primLen) {
+                    string = realloc(string,sizeof(int)*(stringLen+1));
+                    string[stringLen++] = closestNeck[i];
+                }
+                *stringPBR = string;
+                return stringLen;
+            }
+            string = realloc(string,sizeof(int)*(stringLen+1));
+            string[stringLen++] = closestNeck[i];
+            // printf("%d",string[stringLen-1]);
+        }
+        // for (int i = 0;i<primLen;i++) printf("%d",closestNeck[i]);
+        // printf("\n");
+        greatestPCR3Below(closestNeck,n);
+    }
+    *stringPBR = string;
+    return stringLen;
+    //need to find the places to cut out.
+
+    free(closestNeck);
+}
+
 
 
 
@@ -220,7 +338,7 @@ int cutDownDB(int *alpha, int sizeCutDown, int n, int **stringPBR){
     int stringLen = 0;
 
     int rank = testRankDBseqPCR3(alpha,n);
-    int diff = rank-sizeCutDown;
+    int diff = sizeCutDown-rank;
     // printf("diff: %d\n",diff);
     delArrBy1(alpha,n);
     if (diff == 0){
@@ -242,10 +360,11 @@ int cutDownDB(int *alpha, int sizeCutDown, int n, int **stringPBR){
         }
     }
     cuts[sizeCuts-1] = diff;
-
+    for (int i =0;i<sizeCuts;i++){
+        printf("%d\n",cuts[i]);
+    }
     qsort(cuts,sizeCuts,sizeof(int),cmp);
     
-    int primLen;
     //need to find the strings that have substrings that are going to be cutout
 
     int currentCutLen;
@@ -253,7 +372,7 @@ int cutDownDB(int *alpha, int sizeCutDown, int n, int **stringPBR){
     int *cutdownNecklacesRank = malloc(sizeof(int)*sizeCuts);
     for (int i =0;i<sizeCuts;i++){
         
-        // printf("%d\n",string[i]);
+        printf("%d\n",cuts[i]);
         currentCutLen = cuts[i];
         if (currentCutLen == 1){
             cutdownNecklacesRank[i] = n;
@@ -266,57 +385,45 @@ int cutDownDB(int *alpha, int sizeCutDown, int n, int **stringPBR){
         }
         cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
     }
-
-    // for (int i=0;i<sizeCuts;i++){
-    //     printf("%d ",cuts[i]);
-
-    //     // for (int j=0;j<n;j++)printf("%d",cutLocations[i][j]);
-
-    //     printf("%d",getRank(cutLocations[sizeCuts-1],n));
-    //     printf(" %d",n);
-        
-    //     printf("\n");
-    // }
-
-    int curCutOut= 0;
-    int isCut = 0;
-    while (1) {
-        primLen = primLength(alpha,n);
-        if (getRank(alpha,n) == cutdownNecklacesRank[curCutOut]){
-            isCut = 1; 
+    // int curCutOut= 0;
+    // int isCut = 0;
+    // while (1) {
+        // primLen = primLength(alpha,n);
+        // if (getRank(alpha,n) == cutdownNecklacesRank[curCutOut]){
+            // isCut = 1; 
             // printf("HERE");
-        }
-        delArrBy1(alpha,n);
-        for (int i =0;i<primLen;i++){
-            if (isCut){
-                i = i + cuts[curCutOut];
-                isCut=0; 
-                curCutOut++;
-                if (primLen == 1) {
-                    *stringPBR = string; 
-                    return stringLen;
-                }
-                if (i >= primLen){
-                    *stringPBR = string;
-                    break;
-                }
-            }
-            
-            if (primLen == 1) {
-                if (i < primLen) {
-                    string = realloc(string,sizeof(int)*(stringLen+1));
-                    string[stringLen++] = alpha[i]+1;
-                }
-                *stringPBR = string;
-                return stringLen;
-            }
-            string = realloc(string,sizeof(int)*(stringLen+1));
-            string[stringLen++] = alpha[i];
-        }
-        greatestPCR3Below(alpha,n);
-    }
-    *stringPBR = string;
-    return stringLen;
+        // }
+        // delArrBy1(alpha,n);
+        // for (int i =0;i<primLen;i++){
+            // if (isCut){
+                // i = i + cuts[curCutOut];
+                // isCut=0; 
+                // curCutOut++;
+                // if (primLen == 1) {
+                    // *stringPBR = string; 
+                    // return stringLen;
+                // }
+                // if (i >= primLen){
+                    // *stringPBR = string;
+                    // break;
+                // }
+            // }
+            // 
+            // if (primLen == 1) {
+                // if (i < primLen) {
+                    // string = realloc(string,sizeof(int)*(stringLen+1));
+                    // string[stringLen++] = alpha[i]+1;
+                // }
+                // *stringPBR = string;
+                // return stringLen;
+            // }
+            // string = realloc(string,sizeof(int)*(stringLen+1));
+            // string[stringLen++] = alpha[i];
+        // }
+        // greatestPCR3Below(alpha,n);
+    // }
+    // *stringPBR = string;
+    // return stringLen;
 }
 
 int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
@@ -339,7 +446,7 @@ int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
 
 
     int rank = testRankDBseqPCR3(neck,n);
-    int diff = rank-sizeCutDown;
+    int diff = sizeCutDown-rank;
     // printf("%d %d",diff,rank);
     if (diff == 0){
         // printf("hello");
@@ -348,15 +455,11 @@ int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
     int *cuts = malloc(sizeof(int));
     int sizeCuts = 1;
     if (diff > n/2){
-        cuts[sizeCuts-1] = n/2;
+        cuts[sizeCuts-1] = n/2 + 1;
         cuts = realloc(cuts,++sizeCuts*sizeof(int));
         diff = diff-n/2;
-        if (diff > n/2 - 1){
-            cuts[sizeCuts-1] = n/2-1;
-            cuts = realloc(cuts,++sizeCuts*sizeof(int)); 
-            diff = diff-(n/2-1);
-        }
     }
+    printf(".");
     
     cuts[sizeCuts-1] = diff;
     delArrBy1(neck,n);
@@ -404,7 +507,84 @@ int rankCutDownDB(int *neck, int *alpha, int sizeCutDown, int n){
     return unCutRank;
 }
 
-void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha){
+int newRankCutDownDB(int *alpha, int sizeCutDown){
+    int n = (sizeCutDown == 0) ? 1 : 32 - __builtin_clz(sizeCutDown);
+    int *closestNeck = malloc(sizeof(int)*n);
+    sizeCutDown = (int)pow(2,n)- sizeCutDown;
+    int unCutDBSeq = getClosestNeckInDBSeq(sizeCutDown,n,closestNeck);
+    // for (int i=0;i<n;i++) printf("%d",closestNeck[i]);
+    // printf("\n");
+    int *string = malloc(sizeof(int));
+    int diff = sizeCutDown-unCutDBSeq;
+    // printf("\n");
+    fflush(stdout);
+    int *cuts = malloc(sizeof(int));
+    int stringLen = 0;
+
+     if (diff == 0){
+        printf("0 diff");
+        stringLen = DB(closestNeck,n, &string);
+        int rankInFullDB = getRank(alpha,n);
+        return rankInFullDB - (pow(2,n)-stringLen);
+    }
+    //the following code just gets all cuts and puts them in an array for easy access
+    /***********************/
+    int sizeCuts = 1;
+    if (diff > (n+1)/2){
+        cuts[sizeCuts-1] = (n+1)/2;
+        cuts = realloc(cuts,++sizeCuts*sizeof(int));
+        diff = diff-(n+1)/2;
+    }
+    cuts[sizeCuts-1] = diff;
+    /***********************/
+    qsort(cuts,sizeCuts,sizeof(int),cmp);
+
+
+    //the following code will get all of the strings that will have values cut out of them
+    /***********************/
+    int currentCutLen;
+    int (*cutLocations)[n] = calloc(sizeCuts, sizeof(*cutLocations));
+    int *cutdownNecklacesRank = malloc(sizeof(int)*sizeCuts);
+    for (int i =0;i<sizeCuts;i++){
+        
+        // printf("%d\n",string[i]);
+        currentCutLen = cuts[i];
+        if (currentCutLen == 1){
+            cutdownNecklacesRank[i] = pow(2,n)-n;
+            continue;
+        }
+        for (int j=0;j<=n-currentCutLen;j++){
+            if (j%currentCutLen == 0){
+                cutLocations[i][j] = 1;
+            }
+        }
+        cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
+    }
+    int curCutOut= 0;
+    int isCut = 0;
+    /***********************/
+
+    int unCutRank = getRank(alpha,n);
+    for (int i =0;i<sizeCuts;i++){
+        if (unCutRank > cutdownNecklacesRank[i]-cuts[i]- n%(cuts[i]) && unCutRank < cutdownNecklacesRank[i]- n%(cuts[i]) ){
+            printf("String does not exist\n");
+            return -1;
+        }
+    }
+    // for (int i =0;i<sizeCuts)
+    for (int i =sizeCuts-1;i>=0;i--){
+        if (unCutRank > cutdownNecklacesRank[i]- n%(cuts[i])-cuts[i]){
+            unCutRank = unCutRank - cuts[i];
+        }
+    }
+    // unCutRank = unCutRank - (pow(2,n)-stringLen);
+    
+    free(closestNeck);
+    return unCutRank - unCutDBSeq;
+    
+}
+
+void unrankCutDownDB(int *neck, int position, int sizeCutDown,int n, int *alpha){
     int *copy = malloc(sizeof(int)*n);
     for (int i =0;i<n;i++) copy[i] = neck[i];
     
@@ -500,5 +680,82 @@ void unrankCutDownDB(int *neck, int position, int sizeCutDown, int n, int *alpha
         }
     }
     unrank(position,n,alpha);
+    return;
+}
+
+void newUnrankCutDownDB(int position, int sizeCutDown,int *strBPR){
+    int n = (sizeCutDown == 0) ? 1 : 32 - __builtin_clz(sizeCutDown);
+    int *closestNeck = malloc(sizeof(int)*n);
+    sizeCutDown = (int)pow(2,n)- sizeCutDown;
+    int unCutDBSeq = getClosestNeckInDBSeq(sizeCutDown,n,closestNeck);
+    // for (int i=0;i<n;i++) printf("%d",closestNeck[i]);
+    // printf("\n");
+    int *string = malloc(sizeof(int));
+    int diff = sizeCutDown-unCutDBSeq;
+    // printf("\n");
+    position += (unCutDBSeq);
+    int *cuts = malloc(sizeof(int));
+    int stringLen = 0;
+
+     if (diff == 0){
+        stringLen = DB(closestNeck,n, &string);
+        unrank(position,n,strBPR);
+        return;
+    }
+    //the following code just gets all cuts and puts them in an array for easy access
+    /***********************/
+    int sizeCuts = 1;
+    if (diff > (n+1)/2){
+        cuts[sizeCuts-1] = (n+1)/2;
+        cuts = realloc(cuts,++sizeCuts*sizeof(int));
+        diff = diff-(n+1)/2;
+    }
+    cuts[sizeCuts-1] = diff;
+    /***********************/
+    qsort(cuts,sizeCuts,sizeof(int),cmp);
+
+
+    //the following code will get all of the strings that will have values cut out of them
+    /***********************/
+    int currentCutLen;
+    int (*cutLocations)[n] = calloc(sizeCuts, sizeof(*cutLocations));
+    int *cutdownNecklacesRank = malloc(sizeof(int)*sizeCuts);
+    for (int i =0;i<sizeCuts;i++){
+        
+        // printf("%d\n",string[i]);
+        currentCutLen = cuts[i];
+        if (currentCutLen == 1){
+            cutdownNecklacesRank[i] = pow(2,n)-n;
+            continue;
+        }
+        for (int j=0;j<=n-currentCutLen;j++){
+            if (j%currentCutLen == 0){
+                cutLocations[i][j] = 1;
+            }
+        }
+        cutdownNecklacesRank[i] = getRank(cutLocations[i],n);
+    }
+    int curCutOut= 0;
+    int isCut = 0;
+    /***********************/
+
+    for (int i = 0;i < sizeCuts;i++){
+        for (int j=0;j< sizeCuts;j++){
+            if (cutdownNecklacesRank[j] > cutdownNecklacesRank[i]) cutdownNecklacesRank[j] = cutdownNecklacesRank[j] - cuts[i];
+        }
+        if (n%cuts[i] == 0) cutdownNecklacesRank[i] -= cuts[i]-1;
+    }
+
+    // for (int i =0;i<sizeCuts)
+    for (int i =sizeCuts-1;i>=0;i--){
+        if (position > cutdownNecklacesRank[i]- n%(cuts[i])-cuts[i]){
+            printf("%d %d",n%(cuts[i]),cuts[i]);
+            position = position + cuts[i];
+        }
+    }
+    printf(" %d %d",position-unCutDBSeq,position);
+    // unCutRank = unCutRank - (pow(2,n)-stringLen);
+    unrank(position,n,strBPR);
+    free(closestNeck);
     return;
 }
