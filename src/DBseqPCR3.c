@@ -132,7 +132,7 @@ int getClosestNeckInDBSeq(int rank, int n, int* closestNeck){
         if (temp > rank){
             continue;
         }
-        else if (temp > rank -n){
+        else if (temp >= rank -n){
             return temp;
         } else {
             closestNeck[i] = 0;
@@ -161,7 +161,7 @@ void unrank(int rank, int n, int *string){
     for (int i=0;i<n;i++) beta1[i+n] = beta1[i];
     // beta2[n-1] = 1;
     greatestPCR3Below(beta1+n,n); // O(n)
-    int shift =  neckPos - rank;
+    int shift =  rank - neckPos;
     if (shift == 0){
         for (int i=0;i<n;i++)string[i] = beta1[i];
         return;
@@ -173,13 +173,12 @@ void unrank(int rank, int n, int *string){
             beta1[i+len] = beta1[i+n];
         }
     }
-    int offset = rank-neckPos;
     // for (int i =0;i<n;i++) printf("%d",beta1[i]);
     // printf("\n");
     // for (int i =0;i<n;i++) printf("%d",beta1[i+n]);
     // printf("\n");
     for (int i=0;i<n;i++){
-        string[i] = beta1[i+offset];
+        string[i] = beta1[i+shift];
     }
     // printf(" string :");
     // for (int i = 0;i<n;i++) printf("%d",string[i]);
@@ -713,6 +712,10 @@ void newUnrankCutDownDB(int position, int sizeCutDown,int *strBPR){
     cuts[sizeCuts-1] = diff;
     /***********************/
     qsort(cuts,sizeCuts,sizeof(int),cmp);
+    printf("cuts: ");
+    for (int i =0;i<sizeCuts;i++){
+        printf(" %d ",cuts[i]);
+    }
 
 
     //the following code will get all of the strings that will have values cut out of them
@@ -741,14 +744,14 @@ void newUnrankCutDownDB(int position, int sizeCutDown,int *strBPR){
 
     for (int i = 0;i < sizeCuts;i++){
         for (int j=0;j< sizeCuts;j++){
-            if (cutdownNecklacesRank[j] > cutdownNecklacesRank[i]) cutdownNecklacesRank[j] = cutdownNecklacesRank[j] - cuts[i];
+            if (cutdownNecklacesRank[j] > cutdownNecklacesRank[i] && cuts[i] != 1) cutdownNecklacesRank[j] = cutdownNecklacesRank[j] - cuts[i];
         }
-        if (n%cuts[i] == 0) cutdownNecklacesRank[i] -= cuts[i]-1;
+        if (n%cuts[i] == 0) cutdownNecklacesRank[i] -= cuts[i];
     }
 
     // for (int i =0;i<sizeCuts)
     for (int i =sizeCuts-1;i>=0;i--){
-        if (position > cutdownNecklacesRank[i]- n%(cuts[i])-cuts[i]){
+        if (position > cutdownNecklacesRank[i]- n%(cuts[i])-cuts[i] && cuts[i] != 1){
             printf("%d %d",n%(cuts[i]),cuts[i]);
             position = position + cuts[i];
         }

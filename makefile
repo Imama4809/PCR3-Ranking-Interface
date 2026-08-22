@@ -23,7 +23,7 @@ obj:
 bin:
 	mkdir -p bin
 
-$(TARGET): $(TEST_SRC) $(OBJ)
+$(TARGET): bin $(TEST_SRC) $(OBJ)
 	$(CC) $(CFLAGS) $(TEST_SRC) $(OBJ_EXCLUDING_MAIN) $(CHECK_FLAGS) -o bin/$(TARGET)
 
 test: $(TARGET)

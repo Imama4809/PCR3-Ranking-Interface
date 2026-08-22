@@ -381,6 +381,26 @@ START_TEST(testingNewCutDownUnrankFunction){
     }
 }
 
+START_TEST(thingy){
+    int *str = malloc(sizeof(int));
+    int *str1 = malloc(sizeof(int));
+    for (int n=10;n<100;n++){
+        str = realloc(str,sizeof(int)*n);
+        str1 = realloc(str1,sizeof(int)*n);
+        str[0] =1;
+        for (int i = 1;i<n;i++) str[i] = 0;
+        int r = getRank(str,n);
+        unrank(r,n,str1);
+        printf("%d",n);
+        for (int j =0;j<n;j++) printf("%d",str[j]);
+        printf(" ");
+        for (int j =0;j<n;j++) printf("%d",str1[j]);
+        printf(" \n");
+        fflush(stdout);
+        ck_assert_int_eq(1,areArraysEqual(str,str1,n));
+    }
+}
+
 
 Suite *PCR3_Cut_Suite(void){
     Suite *s = suite_create("PCR3_Cut_Suite");
@@ -391,10 +411,11 @@ Suite *PCR3_Cut_Suite(void){
     // tcase_add_test(tc_core,testingUnrankingCutDownDB);
     // tcase_add_test(tc_core,testingUnrankingCutDownDB100110);
     // tcase_add_test(tc_core,testingUnrankingCutDownDB275280);
-    tcase_add_test(tc_core,testGetClosestNeckInDBSeqPCR3test);
-    tcase_add_test(tc_core,testingNewCutDownGenFunction);
+    // tcase_add_test(tc_core,testGetClosestNeckInDBSeqPCR3test);
+    // tcase_add_test(tc_core,testingNewCutDownGenFunction);
     // tcase_add_test(tc_core,testingNewCutDownRankFunction);
-    // tcase_add_test(tc_core,testingNewCutDownUnrankFunction);
+    tcase_add_test(tc_core,testingNewCutDownUnrankFunction);
+    // tcase_add_test(tc_core,thingy);
 
     suite_add_tcase(s,tc_core);
     return s;
