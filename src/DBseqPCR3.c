@@ -25,7 +25,7 @@ int maxZeroBetweenFrontAndBackNextNecklace(int *arr,int n){
     for (int i = 0; i < n - count; i++) {arr[i] = arr[i + count];}
     for (int i = n - count; i < n; i++) {arr[i] = 1;}
     // printf(" ");
-    greatestPCR3Below(arr,n);
+    greatestPCR3BelowNSS(arr,n);
     return count;
 }
 
@@ -159,8 +159,14 @@ void unrank(int rank, int n, int *string){
         return;
     }
     for (int i=0;i<n;i++) beta1[i+n] = beta1[i];
-    // beta2[n-1] = 1;
-    greatestPCR3Below(beta1+n,n); // O(n)
+    for (int i=n-1;;i--){
+        if (beta1[i+n] == 1){
+            beta1[i+n] = 0;
+            break;
+        }
+        beta1[i+n] = 1;
+    }
+    greatestPCR3BelowNSS(beta1+n,n); // O(n)
     int shift =  rank - neckPos;
     if (shift == 0){
         for (int i=0;i<n;i++)string[i] = beta1[i];

@@ -323,6 +323,42 @@ void greatestPCR3Below(int *alpha, int n){
     }
 }
 
+
+void greatestPCR3BelowNSS(int *alpha, int n){
+    if (isNecklacePCR3(alpha,n)) return;
+    int all_ones = 1;
+    int *test = malloc(sizeof(int)*n);
+    test[0] = 1;
+    for (int i = 1; i < n; i++) test[i] = 0;
+    // printf("alpha:");
+    // for (int i =0;i<n;i++) printf("%d",alpha[i]);
+    // printf("test:");
+    // for (int i =0;i<n;i++) printf("%d",test[i]);
+    if (areArraysEqual(test,alpha,n)){ 
+        alpha[0] = 0;
+        free(test);
+        return;
+    }
+    free(test);
+    for (int i = 0; i < n; i++)
+        if (alpha[i] != 1) { all_ones = 0; break; }
+    if (all_ones){ alpha[n-1] = 0; return; }
+    // memcpy(out, alpha, n * sizeof(int));
+    for (int i = n-1;i>=0;i--){
+        if (alpha[i] == 0) {
+            alpha[i] = 1;
+        }
+        else if (alpha[i] == 1) {
+            alpha[i]=0;
+            break;
+        }
+    }
+    for (int i =1;i<=n;i++){
+        alpha[n-i] = 0;
+        if (isNecklacePCR3(alpha,n)){return;}
+    }
+}
+
 int smallestPCR3Neck(int *alpha, int n) {
     if (alpha[0] == 0) return 1;
     return 0;

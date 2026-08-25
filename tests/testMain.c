@@ -11,7 +11,7 @@ Suite *PCR3_Step_Suite(void);
 
 int main(void) {
     int number_failed;
-    SRunner *sr = srunner_create(PCR3_Cut_Suite()); // Initialize with first suite
+    SRunner *sr = srunner_create(PCR3_Necklace_Suite()); // Initialize with first suite
     
     // Add additional suites here
     // srunner_add_suite(sr, PCR3_Necklace_Suite());
