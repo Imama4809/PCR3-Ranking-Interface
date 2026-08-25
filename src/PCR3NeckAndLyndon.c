@@ -109,7 +109,7 @@ int PCR3CountL(int arr[], int n){
     // if (arr[0] == 1) return pow(2,n);
     int t = 0;
     for (int i=0;i<n;i++){t+= arr[i];}
-    printf("hello");
+    // printf("hello");
     if (t== 2*n) return 0;
     for (int i=0;i<n;i++){
         for (int j=0;j<i;j++){
@@ -124,7 +124,7 @@ int PCR3CountL(int arr[], int n){
         for (int j=i;j<n;j++){
             subt2[j] = 2;
         }
-        GreatestNecklaceSmallerThan(dum,n);
+        // GreatestNecklaceSmallerThan(dum,n);
         total += ((L(n,0,subt2) - L(n,0,dum)));
         printf("\n");
         for (int j=0;j<n;j++) printf("%d",subt2[j]);

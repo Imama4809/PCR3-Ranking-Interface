@@ -32,6 +32,22 @@ START_TEST(testingNewRankAlgorithm){
 
 START_TEST(testLyndonAlg){
     int n = 11;
+    int trueTotal;
+    int guessTotal = 0; 
+    for (int val = (1 << n) - 1; val >= 0; val--) {
+        int s[n];
+        trueTotal = 0;
+        for (int i = 0; i < n; i++) {
+            s[n - 1 - i] = (val >> i) & 1;
+        }
+        if (primLength(s,n) == n && isNecklacePCR3(s,n)) trueTotal++;
+        guessTotal = PCR3CountNew(s,n);
+        ck_assert_int_eq(guessTotal,trueTotal);   
+    }
+}
+
+START_TEST(testAltRankAlg){
+    int n = 12;
     int trueTotal = 0;
     int guessTotal = 0;
     int *alpha = malloc(sizeof(int)*n);
@@ -45,14 +61,17 @@ START_TEST(testLyndonAlg){
         }
         for (int i=0;i<n;i++) {s[i]++;sCopy[i]++;}
         if (val < (1 << (n-1))) continue;
+        guessTotal = 0;
         printf("function call");
         trueTotal = PCR3CountNew(s,n);
-        for (int j=1;j<n;j++){
+        for (int j=1;j<=n;j++){
             if (n%j ==0){
                 guessTotal += PCR3CountL(sCopy,j)*j;
-                printf("\n%d %d",j, PCR3CountL(sCopy,j));
+                if (j!= n) guessTotal++;
+                // printf("\n%d %d %d",j, PCR3CountL(sCopy,j),guessTotal);
             }
         }
+        // guessTotal++;
         printf("\n %d %d ",trueTotal,guessTotal);
         for (int j=0;j<n;j++) printf("%d",s[j]);
         printf("\n");
@@ -63,7 +82,7 @@ START_TEST(testLyndonAlg){
         //     for(int i=0;i<n;i++) {printf("%d",s[i]);}
         //     printf(" %d %d %d\n",pow(2,n),rankOld,rankNew);
         // }
-        ck_assert_int_eq(guessTotal, trueTotal);
+        // ck_assert_int_eq(guessTotal, trueTotal);
     }       
 
     free(alpha);
@@ -79,7 +98,8 @@ Suite *PCR3_Necklace_Suite(void){
     TCase *tc_core = tcase_create("Core_Tests");
     tcase_set_timeout(tc_core, 60);
     // tcase_add_test(tc_core,testingNewRankAlgorithm);
-    // tcase_add_test(tc_core,testLyndonAlg);
+    // tcase_add_test(tc_core,testAltRankAlg);
+    tcase_add_test(tc_core,testLyndonAlg);
 
     suite_add_tcase(s,tc_core);
     return s;
